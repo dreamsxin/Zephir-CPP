@@ -155,7 +155,7 @@
 /* List of tokens and their names */
 typedef struct _xx_token_names {
 	unsigned int code;
-	char *name;
+	const char *name;
 } xx_token_names;
 
 /* Active token state */

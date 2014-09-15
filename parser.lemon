@@ -25,7 +25,7 @@
 
 %token_prefix XX_
 %token_type {xx_parser_token*}
-%default_type {json_object*}
+%default_type {Json::Value*}
 %extra_argument {xx_parser_status *status}
 %name xx_
 
@@ -53,55 +53,60 @@
 
 %include {
 
-#include <json-c/json.h>
+#include <iostream>
+#include <string>
+
+#include "json/json.h"
 
 #include "string.h"
 #include "parser.h"
 #include "scanner.h"
 #include "xx.h"
 
-static json_object *xx_ret_literal(int type, xx_parser_token *T, xx_scanner_state *state)
+using namespace std;
+
+static Json::Value* xx_ret_literal(int type, xx_parser_token *T, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
 	switch (type) {
 
 		case XX_T_CONSTANT:
-			json_object_object_add(ret, "type", json_object_new_string("constant"));
+			(*ret)["type"] = "constant";
 			break;
 
 		case XX_T_IDENTIFIER:
-			json_object_object_add(ret, "type", json_object_new_string("variable"));
+			(*ret)["type"] = "variable";
 			break;
 
 		case XX_T_INTEGER:
-			json_object_object_add(ret, "type", json_object_new_string("int"));
+			(*ret)["type"] = "int";
 			break;
 
 		case XX_T_DOUBLE:
-			json_object_object_add(ret, "type", json_object_new_string("double"));
+			(*ret)["type"] = "double";
 			break;
 
 		case XX_T_NULL:
-			json_object_object_add(ret, "type", json_object_new_string("null"));
+			(*ret)["type"] = "null";
 			break;
 
 		case XX_T_STRING:
-			json_object_object_add(ret, "type", json_object_new_string("string"));
+			(*ret)["type"] = "string";
 			break;
 
 		case XX_T_CHAR:
-			json_object_object_add(ret, "type", json_object_new_string("char"));
+			(*ret)["type"] = "char";
 			break;
 
 		default:
 			if (type == XX_T_TRUE) {
-				json_object_object_add(ret, "type", json_object_new_string("bool"));
-				json_object_object_add(ret, "value", json_object_new_string("true"));
+				(*ret)["type"] = "bool";
+				(*ret)["value"] = "true";
 			} else {
 				if (type == XX_T_FALSE) {
-					json_object_object_add(ret, "type", json_object_new_string("bool"));
-					json_object_object_add(ret, "value", json_object_new_string("false"));
+					(*ret)["type"] = "bool";
+					(*ret)["value"] = "false";
 				} else {
 					fprintf(stderr, "literal??\n");
 				}
@@ -109,1036 +114,1051 @@ static json_object *xx_ret_literal(int type, xx_parser_token *T, xx_scanner_stat
 	}
 
 	if (T) {
-		json_object_object_add(ret, "value", json_object_new_string(T->token));
+		(*ret)["value"] = T->token;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_expr(char *type, json_object *left, json_object *right, json_object *extra, xx_scanner_state *state)
+static Json::Value* xx_ret_expr(const char *type, Json::Value* left, Json::Value* right, Json::Value* extra, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string(type));
+	(*ret)["type"] = type;
 
-	if (left) {
-		json_object_object_add(ret, "left", left);
+	if (!(*left).isNull()) {
+		(*ret)["left"] = left;
 	}
-	if (right) {
-		json_object_object_add(ret, "right", right);
+	if (!(*right).isNull()) {
+		(*ret)["right"] = right;
 	}
-	if (extra) {
-		json_object_object_add(ret, "extra", extra);
+	if (!(*extra).isNull()) {
+		(*ret)["extra"] = extra;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_array_item(json_object *key, json_object *value, xx_scanner_state *state)
+static Json::Value* xx_ret_array_item(Json::Value* key, Json::Value* value, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	if (key) {
-		json_object_object_add(ret, "key", key);
+	if (!(*key).isNull()) {
+		(*ret)["key"] = key;
 	}
-	json_object_object_add(ret, "value", value);
+	(*ret)["value"] = value;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
-
-	return ret;
-}
-
-static json_object *xx_ret_namespace(xx_parser_token *T, xx_scanner_state *state)
-{
-	json_object *ret = json_object_new_object();
-
-	json_object_object_add(ret, "type", json_object_new_string("namespace"));
-	json_object_object_add(ret, "name", json_object_new_string(T->token));
-
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_use_aliases(json_object *use_aliases_list, xx_scanner_state *state)
+static Json::Value* xx_ret_namespace(xx_parser_token *T, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("use"));
-	json_object_object_add(ret, "aliases", use_aliases_list);
+	(*ret)["type"] = "namespace";
+	(*ret)["name"] = T->token;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_use_aliases_item(xx_parser_token *T, xx_parser_token *A, xx_scanner_state *state)
+static Json::Value* xx_ret_use_aliases(Json::Value* use_aliases_list, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "name", json_object_new_string(T->token));
+	(*ret)["type"] = "use";
+	(*ret)["aliases"] = use_aliases_list;
+
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
+
+	return ret;
+}
+
+static Json::Value* xx_ret_use_aliases_item(xx_parser_token *T, xx_parser_token *A, xx_scanner_state *state)
+{
+	Json::Value* ret = new Json::Value();
+
+	(*ret)["name"] = T->token;
 	if (A) {
-		json_object_object_add(ret, "alias", json_object_new_string(A->token));
+		(*ret)["alias"] = A->token;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_class(xx_parser_token *T, json_object *class_definition, int is_abstract, int is_final,
-	xx_parser_token *E, json_object *I, xx_scanner_state *state)
+static Json::Value* xx_ret_class(xx_parser_token *T, Json::Value* class_definition, int is_abstract, int is_final,
+	xx_parser_token *E, Json::Value* I, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("class"));
-	json_object_object_add(ret, "name", json_object_new_string(T->token));
+	(*ret)["type"] = "class";
+	(*ret)["name"] = T->token;
 
-	json_object_object_add(ret, "abstract", json_object_new_int(is_abstract));
-	json_object_object_add(ret, "final", json_object_new_int(is_final));
+	(*ret)["abstract"] = is_abstract;
+	(*ret)["final"] = is_final;
 
 	if (E) {
-		json_object_object_add(ret, "extends", json_object_new_string(E->token));
+		(*ret)["extends"] = E->token;
 	}
 
-	if (I) {
-		json_object_object_add(ret, "implements", I);
+	if (!(*I).isNull()) {
+		(*ret)["implements"] = I;
 	}
 
-	if (class_definition) {
-		json_object_object_add(ret, "definition", class_definition);
+	if (!(*class_definition).isNull()) {
+		(*ret)["definition"] = class_definition;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_interface(xx_parser_token *T, json_object *interface_definition, xx_parser_token *E, xx_scanner_state *state)
+static Json::Value* xx_ret_interface(xx_parser_token *T, Json::Value* interface_definition, xx_parser_token *E, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("interface"));
-	json_object_object_add(ret, "name", json_object_new_string(T->token));
+	(*ret)["type"] = "interface";
+	(*ret)["name"] = T->token;
 
 	if (E) {
-		json_object_object_add(ret, "extends", json_object_new_string(E->token));
+		(*ret)["definition"] = E->token;
 	}
 
-	if (interface_definition) {
-		json_object_object_add(ret, "definition", interface_definition);
+	if (!(*interface_definition).isNull()) {
+		(*ret)["definition"] = interface_definition;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_class_definition(json_object *properties, json_object *methods, json_object *constants, xx_scanner_state *state)
+static Json::Value* xx_ret_class_definition(Json::Value* properties, Json::Value* methods, Json::Value* constants, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	if (properties) {
-		json_object_object_add(ret, "properties", properties);
+	if (!(*properties).isNull()) {
+		(*ret)["properties"] = properties;
 	}
-	if (methods) {
-		json_object_object_add(ret, "methods", methods);
+	if (!(*methods).isNull()) {
+		(*ret)["methods"] = methods;
 	}
-	if (constants) {
-		json_object_object_add(ret, "constants", constants);
+	if (!(*constants).isNull()) {
+		(*ret)["constants"] = constants;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_interface_definition(json_object *methods, json_object *constants, xx_scanner_state *state)
+static Json::Value* xx_ret_interface_definition(Json::Value* methods, Json::Value* constants, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	if (methods) {
-		json_object_object_add(ret, "methods", methods);
+	if (!(*methods).isNull()) {
+		(*ret)["methods"] = methods;
 	}
-	if (constants) {
-		json_object_object_add(ret, "constants", constants);
+	if (!(*constants).isNull()) {
+		(*ret)["constants"] = constants;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_class_property(json_object *visibility, xx_parser_token *T,
-		json_object *default_value, xx_parser_token *D, json_object *shortcuts, xx_scanner_state *state)
+static Json::Value* xx_ret_class_property(Json::Value* visibility, xx_parser_token *T,
+		Json::Value* default_value, xx_parser_token *D, Json::Value* shortcuts, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "visibility", visibility);
-	json_object_object_add(ret, "type", json_object_new_string("property"));
-	json_object_object_add(ret, "name", json_object_new_string(T->token));
+	(*ret)["visibility"] = visibility;
+	(*ret)["property"] = "property";
+	(*ret)["name"] = T->token;
 
-	if (default_value) {
-		json_object_object_add(ret, "default", default_value);
+	if (!(*default_value).isNull()) {
+		(*ret)["default"] = default_value;
 	}
 
 	if (D) {
-		json_object_object_add(ret, "docblock", json_object_new_string(D->token));
+		(*ret)["docblock"] = D->token;
 	}
 
-	if (shortcuts) {
-		json_object_object_add(ret, "shortcuts", shortcuts);
+	if (!(*shortcuts).isNull()) {
+		(*ret)["shortcuts"] = shortcuts;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_property_shortcut(xx_parser_token *C, xx_parser_token *D, xx_scanner_state *state)
+static Json::Value* xx_ret_property_shortcut(xx_parser_token *C, xx_parser_token *D, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("shortcut"));
+	(*ret)["type"] = "shortcuts";
 	if (C) {
-		json_object_object_add(ret, "docblock", json_object_new_string(C->token));
+		(*ret)["docblock"] = C->token;
 	}
-	json_object_object_add(ret, "name", json_object_new_string(D->token));
+	(*ret)["name"] = D->token;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_class_const(xx_parser_token *T, json_object *default_value, xx_parser_token *D, xx_scanner_state *state)
+static Json::Value* xx_ret_class_const(xx_parser_token *T, Json::Value* default_value, xx_parser_token *D, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("const"));
-	json_object_object_add(ret, "name", json_object_new_string(T->token));
-	json_object_object_add(ret, "default", default_value);
+	(*ret)["type"] = "const";
+	(*ret)["name"] = T->token;
+	(*ret)["default"] = default_value;
 
 	if (D) {
-		json_object_object_add(ret, "docblock", json_object_new_string(D->token));
+		(*ret)["docblock"] = D->token;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_class_method(json_object *visibility, xx_parser_token *T, json_object *parameters,
-	json_object *statements, xx_parser_token *D, json_object *return_type, xx_scanner_state *state)
+static Json::Value* xx_ret_class_method(Json::Value* visibility, xx_parser_token *T, Json::Value* parameters,
+	Json::Value* statements, xx_parser_token *D, Json::Value* return_type, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "visibility", visibility);
-	json_object_object_add(ret, "type", json_object_new_string("method"));
-	json_object_object_add(ret, "name", json_object_new_string(T->token));
+	(*ret)["visibility"] = visibility;
+	(*ret)["type"] = "method";
+	(*ret)["name"] = T->token;
 
-	if (parameters) {
-		json_object_object_add(ret, "parameters", parameters);
+	if (!(*parameters).isNull()) {
+		(*ret)["parameters"] = parameters;
 	}
 
-	if (statements) {
-		json_object_object_add(ret, "statements", statements);
+	if (!(*statements).isNull()) {
+		(*ret)["statements"] = statements;
 	}
 
 	if (D) {
-		json_object_object_add(ret, "docblock", json_object_new_string(D->token));
+		(*ret)["docblock"] = D->token;
 	}
 
-	if (return_type) {
-		json_object_object_add(ret, "return-type", return_type);
+	if (!(*return_type).isNull()) {
+		(*ret)["return-type"] = return_type;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_parameter(int const_param, json_object *type, json_object *cast, xx_parser_token *N, json_object *default_value,
+static Json::Value* xx_ret_parameter(int const_param, Json::Value* type, Json::Value* cast, xx_parser_token *N, Json::Value* default_value,
 	int mandatory, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("parameter"));
-	json_object_object_add(ret, "name", json_object_new_string(N->token));
-	json_object_object_add(ret, "const", json_object_new_int(const_param));
+	(*ret)["type"] = "parameter";
+	(*ret)["name"] = N->token;
+	(*ret)["const"] = const_param;
 
-	if (type) {
-		json_object_object_add(ret, "data-type", type);
-		json_object_object_add(ret, "mandatory", json_object_new_int(mandatory));
+	if (!(*type).isNull()) {
+		(*ret)["data-type"] = type;
+		(*ret)["mandatory"] = mandatory;
 	} else {
-		json_object_object_add(ret, "data-type", json_object_new_string("variable"));
-		json_object_object_add(ret, "mandatory", json_object_new_int(0));
+		(*ret)["data-type"] = "variable";
+		(*ret)["mandatory"] = 0;
 	}
 
-	if (cast) {
-		json_object_object_add(ret, "cast", cast);
+	if (!(*cast).isNull()) {
+		(*ret)["cast"] = cast;
 	}
-	if (default_value) {
-		json_object_object_add(ret, "default", default_value);
+	if (!(*default_value).isNull()) {
+		(*ret)["default"] = default_value;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_return_type(int is_void, json_object *return_type_list, xx_scanner_state *state)
+static Json::Value* xx_ret_return_type(int is_void, Json::Value* return_type_list, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("return-type"));
+	(*ret)["type"] = "return-type";
 
-	json_object_object_add(ret, "list", return_type_list);
+	(*ret)["list"] = return_type_list;
 
-	json_object_object_add(ret, "void", json_object_new_int(is_void));
+	(*ret)["void"] = is_void;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_return_type_item(json_object *type, json_object *cast, int mandatory, int collection, xx_scanner_state *state)
+static Json::Value* xx_ret_return_type_item(Json::Value* type, Json::Value* cast, int mandatory, int collection, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("return-type-parameter"));
+	(*ret)["type"] = "return-type-parameter";
 
-	if (type) {
-		json_object_object_add(ret, "data-type", type);
-		json_object_object_add(ret, "mandatory", json_object_new_int(mandatory));
+	if (!(*type).isNull()) {
+		(*ret)["data-type"] = type;
+		(*ret)["mandatory"] = mandatory;
 	}
 
-	if (cast) {
-		json_object_object_add(ret, "cast", cast);
-		json_object_object_add(ret, "collection", json_object_new_int(collection));
+	if (!(*cast).isNull()) {
+		(*ret)["cast"] = cast;
+		(*ret)["collection"] = collection;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_type(int type)
+static Json::Value* xx_ret_type(int type)
 {
+	string name;
+
 	switch (type) {
 		case XX_TYPE_INTEGER:
-			return json_object_new_string("int");
+			name = "int";
+			break;
 		case XX_TYPE_UINTEGER:
-			return json_object_new_string("uint");
+			name = "uint";
+			break;
 		case XX_TYPE_DOUBLE:
-			return json_object_new_string("double");
+			name = "double";
+			break;
 		case XX_TYPE_BOOL:
-			return json_object_new_string("bool");
+			name = "bool";
+			break;
 		case XX_TYPE_LONG:
-			return json_object_new_string("long");
+			name = "long";
+			break;
 		case XX_TYPE_ULONG:
-			return json_object_new_string("ulong");
+			name = "ulong";
+			break;
 		case XX_TYPE_STRING:
-			return json_object_new_string("string");
+			name = "string";
+			break;
 		case XX_TYPE_CHAR:
-			return json_object_new_string("char");
+			name = "char";
+			break;
 		case XX_TYPE_ARRAY:
-			return json_object_new_string("array");
+			name = "array";
+			break;
 		case XX_TYPE_VAR:
-			return json_object_new_string("variable");
+			name = "variable";
+			break;
 		case XX_TYPE_CALLABLE:
-			return json_object_new_string("callable");
+			name = "callable";
+			break;
 		case XX_TYPE_RESOURCE:
-			return json_object_new_string("resource");
+			name = "resource";
+			break;
 		case XX_TYPE_OBJECT:
-			return json_object_new_string("object");
+			name = "object";
+			break;
 		case XX_T_TYPE_NULL:
-			return json_object_new_string("null");
+			name = "null";
+			break;
 		case XX_T_TYPE_THIS:
-			return json_object_new_string("this");
+			name = "this";
+			break;
 		default:
 			fprintf(stderr, "unknown type?\n");
 	}
 
+	return new Json::Value(name);
 }
 
-static json_object *xx_ret_list(json_object *list_left, json_object *right_list)
+static Json::Value* xx_ret_list(Json::Value* list_left, Json::Value* right_list)
 {
-	json_object *ret;
+	Json::Value* ret = new Json::Value();
 	int i, array_length;
 
-	ret = json_object_new_array();
+	if (!list_left->isNull()) {
 
-	if (list_left) {
-
-		if (json_object_get_type(list_left) == json_type_array) {
-			array_length = json_object_array_length(list_left);
+		if (list_left->isArray()) {
+			array_length = list_left->size();
 			for (i = 0; i < array_length; i++) {
-				json_object_array_add(ret, json_object_array_get_idx(list_left, i));
-			}
-			//json_object_put(list_left);
+				ret->append((*list_left)[i]);
+			};
 		} else {
-			json_object_array_add(ret, list_left);
+			ret->append(*list_left);
 		}
 
 	}
 
-	json_object_array_add(ret, right_list);
+	ret->append(*right_list);
 
 	return ret;
 }
 
-static json_object *xx_ret_let_statement(json_object *assignments, xx_scanner_state *state)
+static Json::Value* xx_ret_let_statement(Json::Value* assignments, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("let"));
-	json_object_object_add(ret, "assignments", assignments);
+	(*ret)["type"] = "let";
+	(*ret)["assignments"] = assignments;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_let_assignment(char *type, json_object *operator, xx_parser_token *V, xx_parser_token *P, json_object *index_expr, json_object *expr, xx_scanner_state *state)
+static Json::Value* xx_ret_let_assignment(const char *type, Json::Value* op, xx_parser_token *V, xx_parser_token *P, Json::Value* index_expr, Json::Value* expr, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "assign-type", json_object_new_string(type));
-	if (operator) {
-		json_object_object_add(ret, "operator", operator);
+	(*ret)["assign-type"] = type;
+	if (!(*op).isNull()) {
+		(*ret)["operator"] = op;
 	}
-	json_object_object_add(ret, "variable", json_object_new_string(V->token));
+	(*ret)["variable"] = V->token;
 	if (P) {
-		json_object_object_add(ret, "property", json_object_new_string(P->token));
+		(*ret)["property"] = P->token;
 	}
-	if (index_expr) {
-		json_object_object_add(ret, "index-expr", index_expr);
+	if (!(*index_expr).isNull()) {
+		(*ret)["index-expr"] = index_expr;
 	}
-	if (expr) {
-		json_object_object_add(ret, "expr", expr);
+	if (!(*expr).isNull()) {
+		(*ret)["expr"] = expr;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_if_statement(json_object *expr, json_object *statements, json_object *elseif_statements, json_object *else_statements, xx_scanner_state *state)
+static Json::Value* xx_ret_if_statement(Json::Value* expr, Json::Value* statements, Json::Value* elseif_statements, Json::Value* else_statements, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("if"));
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "if";
+	(*ret)["expr"] = expr;
 
-	if (statements) {
-		json_object_object_add(ret, "statements", statements);
+	if (!(*statements).isNull()) {
+		(*ret)["statements"] = statements;
 	}
 
-	if (elseif_statements) {
-		json_object_object_add(ret, "elseif_statements", elseif_statements);
+	if (!(*elseif_statements).isNull()) {
+		(*ret)["elseif_statements"] = elseif_statements;
 	}
 
-	if (else_statements) {
-		json_object_object_add(ret, "else_statements", else_statements);
+	if (!(*else_statements).isNull()) {
+		(*ret)["else_statements"] = else_statements;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_switch_statement(json_object *expr, json_object *clauses, xx_scanner_state *state)
+static Json::Value* xx_ret_switch_statement(Json::Value* expr, Json::Value* clauses, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("switch"));
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "switch";
+	(*ret)["expr"] = expr;
 
-	if (clauses) {
-		json_object_object_add(ret, "clauses", clauses);
+	if (!(*clauses).isNull()) {
+		(*ret)["clauses"] = clauses;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_case_clause(json_object *expr, json_object *statements, xx_scanner_state *state)
+static Json::Value* xx_ret_case_clause(Json::Value* expr, Json::Value* statements, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	if (expr) {
-		json_object_object_add(ret, "type", json_object_new_string("case"));
-		json_object_object_add(ret, "expr", expr);
+	if (!(*expr).isNull()) {
+		(*ret)["type"] = "case";
+		(*ret)["expr"] = expr;
 	} else {
-		json_object_object_add(ret, "type", json_object_new_string("default"));
+		(*ret)["type"] = "default";
 	}
 
-	if (statements) {
-		json_object_object_add(ret, "statements", statements);
+	if (!(*statements).isNull()) {
+		(*ret)["statements"] = statements;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_while_statement(json_object *expr, json_object *statements, xx_scanner_state *state)
+static Json::Value* xx_ret_while_statement(Json::Value* expr, Json::Value* statements, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("while"));
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "while";
+	(*ret)["expr"] = expr;
 
-	if (statements) {
-		json_object_object_add(ret, "statements", statements);
+	if (!(*statements).isNull()) {
+		(*ret)["statements"] = statements;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_do_while_statement(json_object *expr, json_object *statements, xx_scanner_state *state)
+static Json::Value* xx_ret_do_while_statement(Json::Value* expr, Json::Value* statements, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("do-while"));
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "do-while";
+	(*ret)["expr"] = expr;
 
-	if (statements) {
-		json_object_object_add(ret, "statements", statements);
+	if (!(*statements).isNull()) {
+		(*ret)["statements"] = statements;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_try_catch_statement(json_object *statements, json_object *catches, xx_scanner_state *state)
+static Json::Value* xx_ret_try_catch_statement(Json::Value* statements, Json::Value* catches, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("try-catch"));
+	(*ret)["type"] = "try-catch";
 
-	if (statements) {
-		json_object_object_add(ret, "statements", statements);
+	if (!(*statements).isNull()) {
+		(*ret)["statements"] = statements;
 	}
-	if (catches) {
-		json_object_object_add(ret, "catches", catches);
+	if (!(*catches).isNull()) {
+		(*ret)["catches"] = catches;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_catch_statement(json_object *classes, json_object *variable, json_object *statements, xx_scanner_state *state)
+static Json::Value* xx_ret_catch_statement(Json::Value* classes, Json::Value* variable, Json::Value* statements, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	if (classes) {
-		json_object_object_add(ret, "classes", classes);
+	if (!(*classes).isNull()) {
+		(*ret)["classes"] = classes;
 	}
 
-	if (variable) {
-		json_object_object_add(ret, "variable", variable);
+	if (!(*variable).isNull()) {
+		(*ret)["variable"] = variable;
 	}
 
-	if (statements) {
-		json_object_object_add(ret, "statements", statements);
+	if (!(*statements).isNull()) {
+		(*ret)["statements"] = statements;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_for_statement(json_object *expr, xx_parser_token *K, xx_parser_token *V, int reverse, json_object *statements, xx_scanner_state *state)
+static Json::Value* xx_ret_for_statement(Json::Value* expr, xx_parser_token *K, xx_parser_token *V, int reverse, Json::Value* statements, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("for"));
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "for";
+	(*ret)["expr"] = expr;
 
 	if (K) {
-		json_object_object_add(ret, "key", json_object_new_string(K->token));
+		(*ret)["key"] = K->token;
 	}
 	if (V) {
-		json_object_object_add(ret, "value", json_object_new_string(V->token));
+		(*ret)["value"] = V->token;
 	}
 
-	json_object_object_add(ret, "reverse", json_object_new_int(reverse));
+	(*ret)["reverse"] = reverse;
 
-	if (statements) {
-		json_object_object_add(ret, "statements", statements);
+	if (!(*statements).isNull()) {
+		(*ret)["statements"] = statements;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_loop_statement(json_object *statements, xx_scanner_state *state)
+static Json::Value* xx_ret_loop_statement(Json::Value* statements, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("loop"));
+	(*ret)["type"] = "loop";
 
-	if (statements) {
-		json_object_object_add(ret, "statements", statements);
+	if (!(*statements).isNull()) {
+		(*ret)["statements"] = statements;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_empty_statement(xx_scanner_state *state)
+static Json::Value* xx_ret_empty_statement(xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("empty"));
+	(*ret)["type"] = "empty";
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_break_statement(xx_scanner_state *state)
+static Json::Value* xx_ret_break_statement(xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("break"));
+	(*ret)["type"] = "break";
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_continue_statement(xx_scanner_state *state)
+static Json::Value* xx_ret_continue_statement(xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("continue"));
+	(*ret)["type"] = "continue";
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_echo_statement(json_object *expressions, xx_scanner_state *state)
+static Json::Value* xx_ret_echo_statement(Json::Value* expressions, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("echo"));
-	json_object_object_add(ret, "expressions", expressions);
+	(*ret)["type"] = "echo";
+	(*ret)["expressions"] = expressions;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_return_statement(json_object *expr, xx_scanner_state *state)
+static Json::Value* xx_ret_return_statement(Json::Value* expr, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("return"));
-	if (expr) {
-		json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "return";
+	if (!(*expr).isNull()) {
+		(*ret)["expr"] = expr;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_require_statement(json_object *expr, xx_scanner_state *state)
+static Json::Value* xx_ret_require_statement(Json::Value* expr, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("require"));
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "require";
+	(*ret)["expr"] = expr;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_fetch_statement(json_object *expr, xx_scanner_state *state)
+static Json::Value* xx_ret_fetch_statement(Json::Value* expr, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("fetch"));
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "fetch";
+	(*ret)["expr"] = expr;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_fcall_statement(json_object *expr, xx_scanner_state *state)
+static Json::Value* xx_ret_fcall_statement(Json::Value* expr, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("fcall"));
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "fcall";
+	(*ret)["expr"] = expr;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_mcall_statement(json_object *expr, xx_scanner_state *state)
+static Json::Value* xx_ret_mcall_statement(Json::Value* expr, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("mcall"));
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "mcall";
+	(*ret)["expr"] = expr;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_scall_statement(json_object *expr, xx_scanner_state *state)
+static Json::Value* xx_ret_scall_statement(Json::Value* expr, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("scall"));
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "scall";
+	(*ret)["expr"] = expr;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_unset_statement(json_object *expr, xx_scanner_state *state)
+static Json::Value* xx_ret_unset_statement(Json::Value* expr, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("unset"));
+	(*ret)["type"] = "unset";
 
-	json_object_object_add(ret, "expr", expr);
+	(*ret)["expr"] = expr;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_declare_statement(int type, json_object *variables, xx_scanner_state *state)
+static Json::Value* xx_ret_declare_statement(int type, Json::Value* variables, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("declare"));
+	(*ret)["type"] = "declare";
 
 	switch (type) {
 
 		case XX_T_TYPE_INTEGER:
-			json_object_object_add(ret, "data-type", json_object_new_string("int"));
+			(*ret)["data-type"] = "int";
 			break;
 
 		case XX_T_TYPE_UINTEGER:
-			json_object_object_add(ret, "data-type", json_object_new_string("uint"));
+			(*ret)["data-type"] = "uint";
 			break;
 
 		case XX_T_TYPE_LONG:
-			json_object_object_add(ret, "data-type", json_object_new_string("long"));
+			(*ret)["data-type"] = "long";
 			break;
 
 		case XX_T_TYPE_ULONG:
-			json_object_object_add(ret, "data-type", json_object_new_string("ulong"));
+			(*ret)["data-type"] = "ulong";
 			break;
 
 		case XX_T_TYPE_CHAR:
-			json_object_object_add(ret, "data-type", json_object_new_string("char"));
+			(*ret)["data-type"] = "char";
 			break;
 
 		case XX_T_TYPE_UCHAR:
-			json_object_object_add(ret, "data-type", json_object_new_string("uchar"));
+			(*ret)["data-type"] = "uchar";
 			break;
 
 		case XX_T_TYPE_DOUBLE:
-			json_object_object_add(ret, "data-type", json_object_new_string("double"));
+			(*ret)["data-type"] = "double";
 			break;
 
 		case XX_T_TYPE_BOOL:
-			json_object_object_add(ret, "data-type", json_object_new_string("bool"));
+			(*ret)["data-type"] = "bool";
 			break;
 
 		case XX_T_TYPE_STRING:
-			json_object_object_add(ret, "data-type", json_object_new_string("string"));
+			(*ret)["data-type"] = "string";
 			break;
 
 		case XX_T_TYPE_ARRAY:
-			json_object_object_add(ret, "data-type", json_object_new_string("array"));
+			(*ret)["data-type"] = "array";
 			break;
 
 		case XX_T_TYPE_VAR:
-			json_object_object_add(ret, "data-type", json_object_new_string("variable"));
+			(*ret)["data-type"] = "variable";
 			break;
 
 		case XX_T_TYPE_CALLABLE:
-			json_object_object_add(ret, "data-type", json_object_new_string("callable"));
+			(*ret)["data-type"] = "callable";
 			break;
 
 		case XX_T_TYPE_RESOURCE:
-			json_object_object_add(ret, "data-type", json_object_new_string("resource"));
+			(*ret)["data-type"] = "resource";
 			break;
 
 		case XX_T_TYPE_OBJECT:
-			json_object_object_add(ret, "data-type", json_object_new_string("object"));
+			(*ret)["data-type"] = "object";
 			break;
 
 		default:
 			fprintf(stderr, "err 2?\n");
 	}
 
-	json_object_object_add(ret, "variables", variables);
+	(*ret)["variables"] = variables;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_declare_variable(xx_parser_token *T, json_object *expr, xx_scanner_state *state)
+static Json::Value* xx_ret_declare_variable(xx_parser_token *T, Json::Value* expr, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "variable", json_object_new_string(T->token));
-	if (expr) {
-		json_object_object_add(ret, "expr", expr);
+	(*ret)["variable"] = T->token;
+	if (!(*expr).isNull()) {
+		(*ret)["expr"] = expr;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_new_instance(int dynamic, xx_parser_token *T, json_object *parameters, xx_scanner_state *state)
+static Json::Value* xx_ret_new_instance(int dynamic, xx_parser_token *T, Json::Value* parameters, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("new"));
-	json_object_object_add(ret, "class", json_object_new_string(T->token));
-	json_object_object_add(ret, "dynamic", json_object_new_int(dynamic));
+	(*ret)["type"] = "new";
+	(*ret)["class"] = T->token;
+	(*ret)["dynamic"] = dynamic;
 
-	if (parameters) {
-		json_object_object_add(ret, "parameters", parameters);
+	if (!(*parameters).isNull()) {
+		(*ret)["parameters"] = parameters;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_throw_exception(json_object *expr, xx_scanner_state *state)
+static Json::Value* xx_ret_throw_exception(Json::Value* expr, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("throw"));
-	if (expr) {
-		json_object_object_add(ret, "expr", expr);
+	(*ret)["type"] = "throw";
+	if (!(*expr).isNull()) {
+		(*ret)["expr"] = expr;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_fcall(int type, xx_parser_token *F, json_object *parameters, xx_scanner_state *state)
+static Json::Value* xx_ret_fcall(int type, xx_parser_token *F, Json::Value* parameters, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("fcall"));
-	json_object_object_add(ret, "name", json_object_new_string(F->token));
-	json_object_object_add(ret, "call-type", json_object_new_int(type));
+	(*ret)["type"] = "fcall";
+	(*ret)["name"] = F->token;
+	(*ret)["call-type"] = type;
 
-	if (parameters) {
-		json_object_object_add(ret, "parameters", parameters);
+	if (!(*parameters).isNull()) {
+		(*ret)["parameters"] = parameters;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_mcall(int type, json_object *O, xx_parser_token *M, json_object *parameters, xx_scanner_state *state)
+static Json::Value* xx_ret_mcall(int type, Json::Value* O, xx_parser_token *M, Json::Value* parameters, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("mcall"));
-	json_object_object_add(ret, "variable", O);
-	json_object_object_add(ret, "name", json_object_new_string(M->token));
-	json_object_object_add(ret, "call-type", json_object_new_int(type));
+	(*ret)["type"] = "mcall";
+	(*ret)["variable"] = O;
+	(*ret)["name"] = M->token;
+	(*ret)["call-type"] = type;
 
-	if (parameters) {
-		json_object_object_add(ret, "parameters", parameters);
+	if (!(*parameters).isNull()) {
+		(*ret)["parameters"] = parameters;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_scall(int dynamic_class, xx_parser_token *O, int dynamic_method, xx_parser_token *M, json_object *parameters, xx_scanner_state *state)
+static Json::Value* xx_ret_scall(int dynamic_class, xx_parser_token *O, int dynamic_method, xx_parser_token *M, Json::Value* parameters, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("scall"));
-	json_object_object_add(ret, "dynamic-class", json_object_new_int(dynamic_class));
-	json_object_object_add(ret, "class", json_object_new_string(O->token));
-	json_object_object_add(ret, "dynamic", json_object_new_int(dynamic_method));
-	json_object_object_add(ret, "name", json_object_new_string(M->token));
+	(*ret)["type"] = "scall";
+	(*ret)["dynamic-class"] = dynamic_class;
+	(*ret)["class"] = O->token;
+	(*ret)["dynamic"] = dynamic_method;
+	(*ret)["name"] = M->token;
 
-	if (parameters) {
-		json_object_object_add(ret, "parameters", parameters);
+	if (!(*parameters).isNull()) {
+		(*ret)["parameters"] = parameters;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_call_parameter(xx_parser_token *N, json_object *parameter, xx_scanner_state *state, int reference)
+static Json::Value* xx_ret_call_parameter(xx_parser_token *N, Json::Value* parameter, xx_scanner_state *state, int reference)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
 	if (N) {
-		json_object_object_add(ret, "name", json_object_new_string(N->token));
+		(*ret)["name"] = N->token;
 	}
-	json_object_object_add(ret, "parameter", parameter);
+	(*ret)["parameter"] = parameter;
 	if (reference) {
-		json_object_object_add(ret, "reference", json_object_new_int(reference));
+		(*ret)["reference"] = reference;
 	}
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_comment(xx_parser_token *T, xx_scanner_state *state)
+static Json::Value* xx_ret_comment(xx_parser_token *T, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("comment"));
-	json_object_object_add(ret, "value", json_object_new_string(T->token));
+	(*ret)["type"] = "comment";
+	(*ret)["value"] = T->token;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
 
-static json_object *xx_ret_cblock(xx_parser_token *T, xx_scanner_state *state)
+static Json::Value* xx_ret_cblock(xx_parser_token *T, xx_scanner_state *state)
 {
-	json_object *ret = json_object_new_object();
+	Json::Value* ret = new Json::Value();
 
-	json_object_object_add(ret, "type", json_object_new_string("cblock"));
-	json_object_object_add(ret, "value", json_object_new_string(T->token));
+	(*ret)["type"] = "cblock";
+	(*ret)["value"] = T->token;
 
-	json_object_object_add(ret, "file", json_object_new_string(state->active_file));
-	json_object_object_add(ret, "line", json_object_new_int(state->active_line));
-	json_object_object_add(ret, "char", json_object_new_int(state->active_char));
+	(*ret)["file"] = state->active_file;
+	(*ret)["line"] = state->active_line;
+	(*ret)["char"] = state->active_char;
 
 	return ret;
 }
@@ -1149,9 +1169,9 @@ static json_object *xx_ret_cblock(xx_parser_token *T, xx_scanner_state *state)
 
 	//fprintf(stderr, "error!\n");
 
-	json_object *syntax_error = json_object_new_object();
+	Json::Value* syntax_error = new Json::Value();
 
-	json_object_object_add(syntax_error, "type", json_object_new_string("error"));
+	(*syntax_error)["type"] = "error";
 
 	/*if (status->scanner_state->start_length) {
 		fprintf(stderr, "Syntax error, %s", status->scanner_state->start);
@@ -1163,14 +1183,14 @@ static json_object *xx_ret_cblock(xx_parser_token *T, xx_scanner_state *state)
 	//status->syntax_error = emalloc(sizeof(char) * status->syntax_error_len);
 
 	if (status->scanner_state->start_length) {
-		json_object_object_add(syntax_error, "message", json_object_new_string("Syntax error"));
+		(*syntax_error)["message"] = "Syntax error";
 	} else {
-		json_object_object_add(syntax_error, "message", json_object_new_string("Unexpected EOF"));
+		(*syntax_error)["message"] = "Unexpected EOF";
 	}
 
-	json_object_object_add(syntax_error, "file", json_object_new_string(status->scanner_state->active_file));
-	json_object_object_add(syntax_error, "line", json_object_new_int(status->scanner_state->active_line));
-	json_object_object_add(syntax_error, "char", json_object_new_int(status->scanner_state->active_char));
+	(*syntax_error)["file"] = status->scanner_state->active_file;
+	(*syntax_error)["line"] = status->scanner_state->active_line;
+	(*syntax_error)["char"] = status->scanner_state->active_char;
 
 	status->status = XX_PARSING_FAILED;
 
@@ -1192,7 +1212,7 @@ program ::= xx_language(Q) . {
 	status->ret = Q;
 }
 
-%destructor xx_language { json_object_put($$); }
+%destructor xx_language { delete $$; }
 
 xx_language(R) ::= xx_top_statement_list(L) . {
 	R = L;
@@ -1635,39 +1655,39 @@ xx_visibility_list(R) ::= xx_visibility(K) . {
 }
 
 xx_visibility(R) ::= PUBLIC . {
-	R = json_object_new_string("public");
+	R = new Json::Value("public");
 }
 
 xx_visibility(R) ::= PROTECTED . {
-	R = json_object_new_string("protected");
+	R = new Json::Value("protected");
 }
 
 xx_visibility(R) ::= PRIVATE. {
-	R = json_object_new_string("private");
+	R = new Json::Value("private");
 }
 
 xx_visibility(R) ::= STATIC . {
-	R = json_object_new_string("static");
+	R = new Json::Value("static");
 }
 
 xx_visibility(R) ::= SCOPED . {
-	R = json_object_new_string("scoped");
+	R = new Json::Value("scoped");
 }
 
 xx_visibility(R) ::= INLINE . {
-	R = json_object_new_string("inline");
+	R = new Json::Value("inline");
 }
 
 xx_visibility(R) ::= DEPRECATED . {
-	R = json_object_new_string("deprecated");
+	R = new Json::Value("deprecated");
 }
 
 xx_visibility(R) ::= ABSTRACT . {
-	R = json_object_new_string("abstract");
+	R = new Json::Value("abstract");
 }
 
 xx_visibility(R) ::= FINAL . {
-	R = json_object_new_string("final");
+	R = new Json::Value("final");
 }
 
 /* return type */
@@ -2175,33 +2195,33 @@ xx_let_assignments(R) ::= xx_let_assignment(A) . {
 
 /* */
 xx_assignment_operator(R) ::= ASSIGN . {
-	R = json_object_new_string("assign");
+	R = new Json::Value("assign");
 }
 
 /* */
 xx_assignment_operator(R) ::= ADDASSIGN . {
-	R = json_object_new_string("add-assign");
+	R = new Json::Value("add-assign");
 }
 
 /* */
 xx_assignment_operator(R) ::= SUBASSIGN . {
-	R = json_object_new_string("sub-assign");
+	R = new Json::Value("sub-assign");
 }
 
 xx_assignment_operator(R) ::= MULASSIGN . {
-	R = json_object_new_string("mul-assign");
+	R = new Json::Value("mul-assign");
 }
 
 xx_assignment_operator(R) ::= DIVASSIGN . {
-	R = json_object_new_string("div-assign");
+	R = new Json::Value("div-assign");
 }
 
 xx_assignment_operator(R) ::= CONCATASSIGN . {
-	R = json_object_new_string("concat-assign");
+	R = new Json::Value("concat-assign");
 }
 
 xx_assignment_operator(R) ::= MODASSIGN . {
-	R = json_object_new_string("mod-assign");
+	R = new Json::Value("mod-assign");
 }
 
 /* y = {expr} */

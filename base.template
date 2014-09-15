@@ -41,7 +41,7 @@ const xx_token_names xx_tokens[] =
 char *strndup(const char *s, size_t len)
 {
     if (s) {
-        char *ns = malloc(len + 1);
+        char *ns = (char *)malloc(len + 1);
         if (ns) {
             ns[len] = 0;
             return strncpy(ns, s, len);
@@ -72,7 +72,7 @@ static void xx_parse_with_token(void* xx_parser, int opcode, int parsercode, xx_
 
 	xx_parser_token *pToken;
 
-	pToken = malloc(sizeof(xx_parser_token));
+	pToken = (xx_parser_token *)malloc(sizeof(xx_parser_token));
 	pToken->opcode = opcode;
 	pToken->token = token->value;
 	pToken->token_len = token->len;
@@ -139,8 +139,8 @@ int xx_parse_program(char *program, unsigned int program_length, char *file_path
 	 */
 	xx_parser = xx_Alloc(xx_wrapper_alloc);
 
-	parser_status = malloc(sizeof(xx_parser_status));
-	state = malloc(sizeof(xx_scanner_state));
+	parser_status = (xx_parser_status *)malloc(sizeof(xx_parser_status));
+	state = (xx_scanner_state *)malloc(sizeof(xx_scanner_state));
 
 	parser_status->status = XX_PARSING_OK;
 	parser_status->scanner_state = state;
@@ -561,7 +561,7 @@ int xx_parse_program(char *program, unsigned int program_length, char *file_path
 			case XX_SCANNER_RETCODE_ERR:
 			case XX_SCANNER_RETCODE_IMPOSSIBLE:
 				{
-					char *x = malloc(sizeof(char) * 1024);
+					char *x = (char *)malloc(sizeof(char) * 1024);
 					if (state->start) {
 						sprintf(x, "Scanner error: %d %s", scanner_status, state->start);
 					} else {
@@ -589,14 +589,14 @@ int xx_parse_program(char *program, unsigned int program_length, char *file_path
 			}
 			efree(parser_status->syntax_error);
 		}*/
-		//fprintf(stderr, "error!\n");
+		//std::cerr << "error!" std::endl;
 	}
 
 	xx_Free(xx_parser, xx_wrapper_free);
 
 	if (status != FAILURE) {
 		if (parser_status->status == XX_PARSING_OK) {
-			//printf("%s\n", json_object_to_json_string(parser_status->ret));
+			//std::cout << parser_status->ret << std::endl;
 			/*if (parser_status->ret) {
 				ZVAL_ZVAL(*result, parser_status->ret, 0, 0);
 				ZVAL_NULL(parser_status->ret);
@@ -608,7 +608,7 @@ int xx_parse_program(char *program, unsigned int program_length, char *file_path
 	}
 
 	if (parser_status->ret) {
-		printf("%s\n", json_object_to_json_string(parser_status->ret));
+		std::cout << parser_status->ret << std::endl;
 	}
 
 	//efree(Z_STRVAL(processed_comment));*/
