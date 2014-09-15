@@ -44,12 +44,8 @@ int main(int argc, char** argv) {
 		}
 		program[i - 1] = '\0';
 		fclose(fp);
-		
-		std::cout << "start" << std::endl;
 
 		xx_parse_program(program, i - 1, argv[1]);
-		
-		std::cout << "end" << std::endl;
 
 		free(program);
 	}

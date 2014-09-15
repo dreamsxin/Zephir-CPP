@@ -167,8 +167,6 @@ int xx_parse_program(char *program, unsigned int program_length, char *file_path
 
 		state->start_length = (program + program_length - state->start);
 
-		std::cout << token.opcode << std::endl;
-
 		switch (token.opcode) {
 
 			case XX_T_IGNORE:
@@ -453,15 +451,15 @@ int xx_parse_program(char *program, unsigned int program_length, char *file_path
 			case XX_T_TYPE_VAR:
 				xx_(xx_parser, XX_TYPE_VAR, NULL, parser_status);
 				break;
-		    case XX_T_TYPE_OBJECT:
-                xx_(xx_parser, XX_TYPE_OBJECT, NULL, parser_status);
-                break;
-		    case XX_T_TYPE_RESOURCE:
-                xx_(xx_parser, XX_TYPE_RESOURCE, NULL, parser_status);
-                break;
-            case XX_T_TYPE_CALLABLE:
-                xx_(xx_parser, XX_TYPE_CALLABLE, NULL, parser_status);
-                break;
+			case XX_T_TYPE_OBJECT:
+				xx_(xx_parser, XX_TYPE_OBJECT, NULL, parser_status);
+				break;
+			case XX_T_TYPE_RESOURCE:
+				xx_(xx_parser, XX_TYPE_RESOURCE, NULL, parser_status);
+				break;
+			case XX_T_TYPE_CALLABLE:
+				xx_(xx_parser, XX_TYPE_CALLABLE, NULL, parser_status);
+				break;
 
 			case XX_T_ADD:
 				xx_(xx_parser, XX_ADD, NULL, parser_status);
@@ -610,7 +608,7 @@ int xx_parse_program(char *program, unsigned int program_length, char *file_path
 	}
 
 	if (parser_status->ret) {
-		std::cout << parser_status->ret << std::endl;
+		std::cout << *(parser_status->ret) << std::endl;
 	}
 
 	//efree(Z_STRVAL(processed_comment));*/

@@ -132,13 +132,13 @@ static Json::Value* xx_ret_expr(const char *type, Json::Value* left, Json::Value
 	(*ret)["type"] = type;
 
 	if (nullptr != left) {
-		(*ret)["left"] = left;
+		(*ret)["left"] = *left;
 	}
 	if (nullptr != right) {
-		(*ret)["right"] = right;
+		(*ret)["right"] = *right;
 	}
 	if (nullptr != extra) {
-		(*ret)["extra"] = extra;
+		(*ret)["extra"] = *extra;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -155,7 +155,7 @@ static Json::Value* xx_ret_array_item(Json::Value* key, Json::Value* value, xx_s
 	if (nullptr != key) {
 		(*ret)["key"] = key;
 	}
-	(*ret)["value"] = value;
+	(*ret)["value"] = *value;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -183,7 +183,7 @@ static Json::Value* xx_ret_use_aliases(Json::Value* use_aliases_list, xx_scanner
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "use";
-	(*ret)["aliases"] = use_aliases_list;
+	(*ret)["aliases"] = *use_aliases_list;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -224,11 +224,11 @@ static Json::Value* xx_ret_class(xx_parser_token *T, Json::Value* class_definiti
 	}
 
 	if (nullptr != I) {
-		(*ret)["implements"] = I;
+		(*ret)["implements"] = *I;
 	}
 
 	if (nullptr != class_definition) {
-		(*ret)["definition"] = class_definition;
+		(*ret)["definition"] = *class_definition;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -250,7 +250,7 @@ static Json::Value* xx_ret_interface(xx_parser_token *T, Json::Value* interface_
 	}
 
 	if (nullptr != interface_definition) {
-		(*ret)["definition"] = interface_definition;
+		(*ret)["definition"] = *interface_definition;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -265,13 +265,13 @@ static Json::Value* xx_ret_class_definition(Json::Value* properties, Json::Value
 	Json::Value* ret = new Json::Value();
 
 	if (nullptr != properties) {
-		(*ret)["properties"] = properties;
+		(*ret)["properties"] = *properties;
 	}
 	if (nullptr != methods) {
-		(*ret)["methods"] = methods;
+		(*ret)["methods"] = *methods;
 	}
 	if (nullptr != constants) {
-		(*ret)["constants"] = constants;
+		(*ret)["constants"] = *constants;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -286,10 +286,10 @@ static Json::Value* xx_ret_interface_definition(Json::Value* methods, Json::Valu
 	Json::Value* ret = new Json::Value();
 
 	if (nullptr != methods) {
-		(*ret)["methods"] = methods;
+		(*ret)["methods"] = *methods;
 	}
 	if (nullptr != constants) {
-		(*ret)["constants"] = constants;
+		(*ret)["constants"] = *constants;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -309,7 +309,7 @@ static Json::Value* xx_ret_class_property(Json::Value* visibility, xx_parser_tok
 	(*ret)["name"] = T->token;
 
 	if (nullptr != default_value) {
-		(*ret)["default"] = default_value;
+		(*ret)["default"] = *default_value;
 	}
 
 	if (D) {
@@ -317,7 +317,7 @@ static Json::Value* xx_ret_class_property(Json::Value* visibility, xx_parser_tok
 	}
 
 	if (nullptr != shortcuts) {
-		(*ret)["shortcuts"] = shortcuts;
+		(*ret)["shortcuts"] = *shortcuts;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -373,11 +373,11 @@ static Json::Value* xx_ret_class_method(Json::Value* visibility, xx_parser_token
 	(*ret)["name"] = T->token;
 
 	if (nullptr != parameters) {
-		(*ret)["parameters"] = parameters;
+		(*ret)["parameters"] = *parameters;
 	}
 
 	if (nullptr != statements) {
-		(*ret)["statements"] = statements;
+		(*ret)["statements"] = *statements;
 	}
 
 	if (D) {
@@ -385,7 +385,7 @@ static Json::Value* xx_ret_class_method(Json::Value* visibility, xx_parser_token
 	}
 
 	if (nullptr != return_type) {
-		(*ret)["return-type"] = return_type;
+		(*ret)["return-type"] = *return_type;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -405,7 +405,7 @@ static Json::Value* xx_ret_parameter(int const_param, Json::Value* type, Json::V
 	(*ret)["const"] = const_param;
 
 	if (nullptr != type) {
-		(*ret)["data-type"] = type;
+		(*ret)["data-type"] = *type;
 		(*ret)["mandatory"] = mandatory;
 	} else {
 		(*ret)["data-type"] = "variable";
@@ -413,10 +413,10 @@ static Json::Value* xx_ret_parameter(int const_param, Json::Value* type, Json::V
 	}
 
 	if (nullptr != cast) {
-		(*ret)["cast"] = cast;
+		(*ret)["cast"] = *cast;
 	}
 	if (nullptr != default_value) {
-		(*ret)["default"] = default_value;
+		(*ret)["default"] = *default_value;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -432,7 +432,7 @@ static Json::Value* xx_ret_return_type(int is_void, Json::Value* return_type_lis
 
 	(*ret)["type"] = "return-type";
 
-	(*ret)["list"] = return_type_list;
+	(*ret)["list"] = *return_type_list;
 
 	(*ret)["void"] = is_void;
 
@@ -450,12 +450,12 @@ static Json::Value* xx_ret_return_type_item(Json::Value* type, Json::Value* cast
 	(*ret)["type"] = "return-type-parameter";
 
 	if (nullptr != type) {
-		(*ret)["data-type"] = type;
+		(*ret)["data-type"] = *type;
 		(*ret)["mandatory"] = mandatory;
 	}
 
 	if (nullptr != cast) {
-		(*ret)["cast"] = cast;
+		(*ret)["cast"] = *cast;
 		(*ret)["collection"] = collection;
 	}
 
@@ -529,18 +529,12 @@ static Json::Value* xx_ret_list(Json::Value* list_left, Json::Value* right_list)
 	int i, array_length;
 
 	if (nullptr != list_left) {
-		if (list_left->isArray()) {
-			array_length = list_left->size();
-			for (i = 0; i < array_length; i++) {
-				ret->append((*list_left)[i]);
-			};
-		} else {
-			ret->append(*list_left);
-		}
-
+		ret->append(*list_left);
 	}
 
-	ret->append(*right_list);
+	if (nullptr != right_list) {
+		ret->append(*right_list);
+	}
 
 	return ret;
 }
@@ -550,7 +544,7 @@ static Json::Value* xx_ret_let_statement(Json::Value* assignments, xx_scanner_st
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "let";
-	(*ret)["assignments"] = assignments;
+	(*ret)["assignments"] = *assignments;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -565,17 +559,17 @@ static Json::Value* xx_ret_let_assignment(const char *type, Json::Value* op, xx_
 
 	(*ret)["assign-type"] = type;
 	if (nullptr != op) {
-		(*ret)["operator"] = op;
+		(*ret)["operator"] = *op;
 	}
 	(*ret)["variable"] = V->token;
 	if (P) {
 		(*ret)["property"] = P->token;
 	}
 	if (nullptr != index_expr) {
-		(*ret)["index-expr"] = index_expr;
+		(*ret)["index-expr"] = *index_expr;
 	}
 	if (nullptr != expr) {
-		(*ret)["expr"] = expr;
+		(*ret)["expr"] = *expr;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -590,18 +584,18 @@ static Json::Value* xx_ret_if_statement(Json::Value* expr, Json::Value* statemen
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "if";
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	if (nullptr != statements) {
-		(*ret)["statements"] = statements;
+		(*ret)["statements"] = *statements;
 	}
 
 	if (nullptr != elseif_statements) {
-		(*ret)["elseif_statements"] = elseif_statements;
+		(*ret)["elseif_statements"] = *elseif_statements;
 	}
 
 	if (nullptr != else_statements) {
-		(*ret)["else_statements"] = else_statements;
+		(*ret)["else_statements"] = *else_statements;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -616,10 +610,10 @@ static Json::Value* xx_ret_switch_statement(Json::Value* expr, Json::Value* clau
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "switch";
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	if (nullptr != clauses) {
-		(*ret)["clauses"] = clauses;
+		(*ret)["clauses"] = *clauses;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -635,13 +629,13 @@ static Json::Value* xx_ret_case_clause(Json::Value* expr, Json::Value* statement
 
 	if (nullptr != expr) {
 		(*ret)["type"] = "case";
-		(*ret)["expr"] = expr;
+		(*ret)["expr"] = *expr;
 	} else {
 		(*ret)["type"] = "default";
 	}
 
 	if (nullptr != statements) {
-		(*ret)["statements"] = statements;
+		(*ret)["statements"] = *statements;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -656,10 +650,10 @@ static Json::Value* xx_ret_while_statement(Json::Value* expr, Json::Value* state
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "while";
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	if (nullptr != statements) {
-		(*ret)["statements"] = statements;
+		(*ret)["statements"] = *statements;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -674,10 +668,10 @@ static Json::Value* xx_ret_do_while_statement(Json::Value* expr, Json::Value* st
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "do-while";
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	if (nullptr != statements) {
-		(*ret)["statements"] = statements;
+		(*ret)["statements"] = *statements;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -694,10 +688,10 @@ static Json::Value* xx_ret_try_catch_statement(Json::Value* statements, Json::Va
 	(*ret)["type"] = "try-catch";
 
 	if (nullptr != statements) {
-		(*ret)["statements"] = statements;
+		(*ret)["statements"] = *statements;
 	}
 	if (nullptr != catches) {
-		(*ret)["catches"] = catches;
+		(*ret)["catches"] = *catches;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -712,15 +706,15 @@ static Json::Value* xx_ret_catch_statement(Json::Value* classes, Json::Value* va
 	Json::Value* ret = new Json::Value();
 
 	if (nullptr != classes) {
-		(*ret)["classes"] = classes;
+		(*ret)["classes"] = *classes;
 	}
 
 	if (nullptr != variable) {
-		(*ret)["variable"] = variable;
+		(*ret)["variable"] = *variable;
 	}
 
 	if (nullptr != statements) {
-		(*ret)["statements"] = statements;
+		(*ret)["statements"] = *statements;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -735,7 +729,7 @@ static Json::Value* xx_ret_for_statement(Json::Value* expr, xx_parser_token *K, 
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "for";
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	if (K) {
 		(*ret)["key"] = K->token;
@@ -747,7 +741,7 @@ static Json::Value* xx_ret_for_statement(Json::Value* expr, xx_parser_token *K, 
 	(*ret)["reverse"] = reverse;
 
 	if (nullptr != statements) {
-		(*ret)["statements"] = statements;
+		(*ret)["statements"] = *statements;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -764,7 +758,7 @@ static Json::Value* xx_ret_loop_statement(Json::Value* statements, xx_scanner_st
 	(*ret)["type"] = "loop";
 
 	if (nullptr != statements) {
-		(*ret)["statements"] = statements;
+		(*ret)["statements"] = *statements;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -818,7 +812,7 @@ static Json::Value* xx_ret_echo_statement(Json::Value* expressions, xx_scanner_s
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "echo";
-	(*ret)["expressions"] = expressions;
+	(*ret)["expressions"] = *expressions;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -833,7 +827,7 @@ static Json::Value* xx_ret_return_statement(Json::Value* expr, xx_scanner_state 
 
 	(*ret)["type"] = "return";
 	if (nullptr != expr) {
-		(*ret)["expr"] = expr;
+		(*ret)["expr"] = *expr;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -848,7 +842,7 @@ static Json::Value* xx_ret_require_statement(Json::Value* expr, xx_scanner_state
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "require";
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -862,7 +856,7 @@ static Json::Value* xx_ret_fetch_statement(Json::Value* expr, xx_scanner_state *
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "fetch";
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -876,7 +870,7 @@ static Json::Value* xx_ret_fcall_statement(Json::Value* expr, xx_scanner_state *
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "fcall";
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -890,7 +884,7 @@ static Json::Value* xx_ret_mcall_statement(Json::Value* expr, xx_scanner_state *
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "mcall";
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -904,7 +898,7 @@ static Json::Value* xx_ret_scall_statement(Json::Value* expr, xx_scanner_state *
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "scall";
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -919,7 +913,7 @@ static Json::Value* xx_ret_unset_statement(Json::Value* expr, xx_scanner_state *
 
 	(*ret)["type"] = "unset";
 
-	(*ret)["expr"] = expr;
+	(*ret)["expr"] = *expr;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -996,7 +990,7 @@ static Json::Value* xx_ret_declare_statement(int type, Json::Value* variables, x
 			fprintf(stderr, "err 2?\n");
 	}
 
-	(*ret)["variables"] = variables;
+	(*ret)["variables"] = *variables;
 
 	(*ret)["file"] = state->active_file;
 	(*ret)["line"] = state->active_line;
@@ -1011,7 +1005,7 @@ static Json::Value* xx_ret_declare_variable(xx_parser_token *T, Json::Value* exp
 
 	(*ret)["variable"] = T->token;
 	if (nullptr != expr) {
-		(*ret)["expr"] = expr;
+		(*ret)["expr"] = *expr;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -1030,7 +1024,7 @@ static Json::Value* xx_ret_new_instance(int dynamic, xx_parser_token *T, Json::V
 	(*ret)["dynamic"] = dynamic;
 
 	if (nullptr != parameters) {
-		(*ret)["parameters"] = parameters;
+		(*ret)["parameters"] = *parameters;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -1046,7 +1040,7 @@ static Json::Value* xx_ret_throw_exception(Json::Value* expr, xx_scanner_state *
 
 	(*ret)["type"] = "throw";
 	if (nullptr != expr) {
-		(*ret)["expr"] = expr;
+		(*ret)["expr"] = *expr;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -1065,7 +1059,7 @@ static Json::Value* xx_ret_fcall(int type, xx_parser_token *F, Json::Value* para
 	(*ret)["call-type"] = type;
 
 	if (nullptr != parameters) {
-		(*ret)["parameters"] = parameters;
+		(*ret)["parameters"] = *parameters;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -1085,7 +1079,7 @@ static Json::Value* xx_ret_mcall(int type, Json::Value* O, xx_parser_token *M, J
 	(*ret)["call-type"] = type;
 
 	if (nullptr != parameters) {
-		(*ret)["parameters"] = parameters;
+		(*ret)["parameters"] = *parameters;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -1106,7 +1100,7 @@ static Json::Value* xx_ret_scall(int dynamic_class, xx_parser_token *O, int dyna
 	(*ret)["name"] = M->token;
 
 	if (nullptr != parameters) {
-		(*ret)["parameters"] = parameters;
+		(*ret)["parameters"] = *parameters;
 	}
 
 	(*ret)["file"] = state->active_file;
@@ -1123,7 +1117,7 @@ static Json::Value* xx_ret_call_parameter(xx_parser_token *N, Json::Value* param
 	if (N) {
 		(*ret)["name"] = N->token;
 	}
-	(*ret)["parameter"] = parameter;
+	(*ret)["parameter"] = *parameter;
 	if (reference) {
 		(*ret)["reference"] = reference;
 	}
