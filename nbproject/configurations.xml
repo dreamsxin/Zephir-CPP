@@ -50,15 +50,11 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
-        <cTool>
-          <incDir>
-            <pElem>/usr/include</pElem>
-          </incDir>
-        </cTool>
         <ccTool>
           <incDir>
             <pElem>/usr/include/c++/4.8.2</pElem>
           </incDir>
+          <commandLine>-std=c++11</commandLine>
         </ccTool>
       </compileType>
       <item path="/home/zhuzx/work/Zephir-CPP/base.template"

@@ -5,6 +5,7 @@
  * Created on September 15, 2014, 9:08 AM
  */
 
+#include <iostream>
 #include<stdlib.h>
 #include <stdio.h>
 #include "parser.h"
@@ -43,8 +44,12 @@ int main(int argc, char** argv) {
 		}
 		program[i - 1] = '\0';
 		fclose(fp);
+		
+		std::cout << "start" << std::endl;
 
 		xx_parse_program(program, i - 1, argv[1]);
+		
+		std::cout << "end" << std::endl;
 
 		free(program);
 	}

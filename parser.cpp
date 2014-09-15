@@ -7,6 +7,7 @@
 
 
 #include <iostream>
+#include <cstddef>
 #include <string>
 
 #include "json/json.h"
@@ -83,13 +84,13 @@ static Json::Value* xx_ret_expr(const char *type, Json::Value* left, Json::Value
 
 	(*ret)["type"] = type;
 
-	if (!(*left).isNull()) {
+	if (nullptr != left) {
 		(*ret)["left"] = left;
 	}
-	if (!(*right).isNull()) {
+	if (nullptr != right) {
 		(*ret)["right"] = right;
 	}
-	if (!(*extra).isNull()) {
+	if (nullptr != extra) {
 		(*ret)["extra"] = extra;
 	}
 
@@ -104,7 +105,7 @@ static Json::Value* xx_ret_array_item(Json::Value* key, Json::Value* value, xx_s
 {
 	Json::Value* ret = new Json::Value();
 
-	if (!(*key).isNull()) {
+	if (nullptr != key) {
 		(*ret)["key"] = key;
 	}
 	(*ret)["value"] = value;
@@ -175,11 +176,11 @@ static Json::Value* xx_ret_class(xx_parser_token *T, Json::Value* class_definiti
 		(*ret)["extends"] = E->token;
 	}
 
-	if (!(*I).isNull()) {
+	if (nullptr != I) {
 		(*ret)["implements"] = I;
 	}
 
-	if (!(*class_definition).isNull()) {
+	if (nullptr != class_definition) {
 		(*ret)["definition"] = class_definition;
 	}
 
@@ -201,7 +202,7 @@ static Json::Value* xx_ret_interface(xx_parser_token *T, Json::Value* interface_
 		(*ret)["definition"] = E->token;
 	}
 
-	if (!(*interface_definition).isNull()) {
+	if (nullptr != interface_definition) {
 		(*ret)["definition"] = interface_definition;
 	}
 
@@ -216,13 +217,13 @@ static Json::Value* xx_ret_class_definition(Json::Value* properties, Json::Value
 {
 	Json::Value* ret = new Json::Value();
 
-	if (!(*properties).isNull()) {
+	if (nullptr != properties) {
 		(*ret)["properties"] = properties;
 	}
-	if (!(*methods).isNull()) {
+	if (nullptr != methods) {
 		(*ret)["methods"] = methods;
 	}
-	if (!(*constants).isNull()) {
+	if (nullptr != constants) {
 		(*ret)["constants"] = constants;
 	}
 
@@ -237,10 +238,10 @@ static Json::Value* xx_ret_interface_definition(Json::Value* methods, Json::Valu
 {
 	Json::Value* ret = new Json::Value();
 
-	if (!(*methods).isNull()) {
+	if (nullptr != methods) {
 		(*ret)["methods"] = methods;
 	}
-	if (!(*constants).isNull()) {
+	if (nullptr != constants) {
 		(*ret)["constants"] = constants;
 	}
 
@@ -260,7 +261,7 @@ static Json::Value* xx_ret_class_property(Json::Value* visibility, xx_parser_tok
 	(*ret)["property"] = "property";
 	(*ret)["name"] = T->token;
 
-	if (!(*default_value).isNull()) {
+	if (nullptr != default_value) {
 		(*ret)["default"] = default_value;
 	}
 
@@ -268,7 +269,7 @@ static Json::Value* xx_ret_class_property(Json::Value* visibility, xx_parser_tok
 		(*ret)["docblock"] = D->token;
 	}
 
-	if (!(*shortcuts).isNull()) {
+	if (nullptr != shortcuts) {
 		(*ret)["shortcuts"] = shortcuts;
 	}
 
@@ -324,11 +325,11 @@ static Json::Value* xx_ret_class_method(Json::Value* visibility, xx_parser_token
 	(*ret)["type"] = "method";
 	(*ret)["name"] = T->token;
 
-	if (!(*parameters).isNull()) {
+	if (nullptr != parameters) {
 		(*ret)["parameters"] = parameters;
 	}
 
-	if (!(*statements).isNull()) {
+	if (nullptr != statements) {
 		(*ret)["statements"] = statements;
 	}
 
@@ -336,7 +337,7 @@ static Json::Value* xx_ret_class_method(Json::Value* visibility, xx_parser_token
 		(*ret)["docblock"] = D->token;
 	}
 
-	if (!(*return_type).isNull()) {
+	if (nullptr != return_type) {
 		(*ret)["return-type"] = return_type;
 	}
 
@@ -356,7 +357,7 @@ static Json::Value* xx_ret_parameter(int const_param, Json::Value* type, Json::V
 	(*ret)["name"] = N->token;
 	(*ret)["const"] = const_param;
 
-	if (!(*type).isNull()) {
+	if (nullptr != type) {
 		(*ret)["data-type"] = type;
 		(*ret)["mandatory"] = mandatory;
 	} else {
@@ -364,10 +365,10 @@ static Json::Value* xx_ret_parameter(int const_param, Json::Value* type, Json::V
 		(*ret)["mandatory"] = 0;
 	}
 
-	if (!(*cast).isNull()) {
+	if (nullptr != cast) {
 		(*ret)["cast"] = cast;
 	}
-	if (!(*default_value).isNull()) {
+	if (nullptr != default_value) {
 		(*ret)["default"] = default_value;
 	}
 
@@ -401,12 +402,12 @@ static Json::Value* xx_ret_return_type_item(Json::Value* type, Json::Value* cast
 
 	(*ret)["type"] = "return-type-parameter";
 
-	if (!(*type).isNull()) {
+	if (nullptr != type) {
 		(*ret)["data-type"] = type;
 		(*ret)["mandatory"] = mandatory;
 	}
 
-	if (!(*cast).isNull()) {
+	if (nullptr != cast) {
 		(*ret)["cast"] = cast;
 		(*ret)["collection"] = collection;
 	}
@@ -480,8 +481,7 @@ static Json::Value* xx_ret_list(Json::Value* list_left, Json::Value* right_list)
 	Json::Value* ret = new Json::Value();
 	int i, array_length;
 
-	if (!list_left->isNull()) {
-
+	if (nullptr != list_left) {
 		if (list_left->isArray()) {
 			array_length = list_left->size();
 			for (i = 0; i < array_length; i++) {
@@ -517,17 +517,17 @@ static Json::Value* xx_ret_let_assignment(const char *type, Json::Value* op, xx_
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["assign-type"] = type;
-	if (!(*op).isNull()) {
+	if (nullptr != op) {
 		(*ret)["operator"] = op;
 	}
 	(*ret)["variable"] = V->token;
 	if (P) {
 		(*ret)["property"] = P->token;
 	}
-	if (!(*index_expr).isNull()) {
+	if (nullptr != index_expr) {
 		(*ret)["index-expr"] = index_expr;
 	}
-	if (!(*expr).isNull()) {
+	if (nullptr != expr) {
 		(*ret)["expr"] = expr;
 	}
 
@@ -545,15 +545,15 @@ static Json::Value* xx_ret_if_statement(Json::Value* expr, Json::Value* statemen
 	(*ret)["type"] = "if";
 	(*ret)["expr"] = expr;
 
-	if (!(*statements).isNull()) {
+	if (nullptr != statements) {
 		(*ret)["statements"] = statements;
 	}
 
-	if (!(*elseif_statements).isNull()) {
+	if (nullptr != elseif_statements) {
 		(*ret)["elseif_statements"] = elseif_statements;
 	}
 
-	if (!(*else_statements).isNull()) {
+	if (nullptr != else_statements) {
 		(*ret)["else_statements"] = else_statements;
 	}
 
@@ -571,7 +571,7 @@ static Json::Value* xx_ret_switch_statement(Json::Value* expr, Json::Value* clau
 	(*ret)["type"] = "switch";
 	(*ret)["expr"] = expr;
 
-	if (!(*clauses).isNull()) {
+	if (nullptr != clauses) {
 		(*ret)["clauses"] = clauses;
 	}
 
@@ -586,14 +586,14 @@ static Json::Value* xx_ret_case_clause(Json::Value* expr, Json::Value* statement
 {
 	Json::Value* ret = new Json::Value();
 
-	if (!(*expr).isNull()) {
+	if (nullptr != expr) {
 		(*ret)["type"] = "case";
 		(*ret)["expr"] = expr;
 	} else {
 		(*ret)["type"] = "default";
 	}
 
-	if (!(*statements).isNull()) {
+	if (nullptr != statements) {
 		(*ret)["statements"] = statements;
 	}
 
@@ -611,7 +611,7 @@ static Json::Value* xx_ret_while_statement(Json::Value* expr, Json::Value* state
 	(*ret)["type"] = "while";
 	(*ret)["expr"] = expr;
 
-	if (!(*statements).isNull()) {
+	if (nullptr != statements) {
 		(*ret)["statements"] = statements;
 	}
 
@@ -629,7 +629,7 @@ static Json::Value* xx_ret_do_while_statement(Json::Value* expr, Json::Value* st
 	(*ret)["type"] = "do-while";
 	(*ret)["expr"] = expr;
 
-	if (!(*statements).isNull()) {
+	if (nullptr != statements) {
 		(*ret)["statements"] = statements;
 	}
 
@@ -646,10 +646,10 @@ static Json::Value* xx_ret_try_catch_statement(Json::Value* statements, Json::Va
 
 	(*ret)["type"] = "try-catch";
 
-	if (!(*statements).isNull()) {
+	if (nullptr != statements) {
 		(*ret)["statements"] = statements;
 	}
-	if (!(*catches).isNull()) {
+	if (nullptr != catches) {
 		(*ret)["catches"] = catches;
 	}
 
@@ -664,15 +664,15 @@ static Json::Value* xx_ret_catch_statement(Json::Value* classes, Json::Value* va
 {
 	Json::Value* ret = new Json::Value();
 
-	if (!(*classes).isNull()) {
+	if (nullptr != classes) {
 		(*ret)["classes"] = classes;
 	}
 
-	if (!(*variable).isNull()) {
+	if (nullptr != variable) {
 		(*ret)["variable"] = variable;
 	}
 
-	if (!(*statements).isNull()) {
+	if (nullptr != statements) {
 		(*ret)["statements"] = statements;
 	}
 
@@ -699,7 +699,7 @@ static Json::Value* xx_ret_for_statement(Json::Value* expr, xx_parser_token *K, 
 
 	(*ret)["reverse"] = reverse;
 
-	if (!(*statements).isNull()) {
+	if (nullptr != statements) {
 		(*ret)["statements"] = statements;
 	}
 
@@ -716,7 +716,7 @@ static Json::Value* xx_ret_loop_statement(Json::Value* statements, xx_scanner_st
 
 	(*ret)["type"] = "loop";
 
-	if (!(*statements).isNull()) {
+	if (nullptr != statements) {
 		(*ret)["statements"] = statements;
 	}
 
@@ -785,7 +785,7 @@ static Json::Value* xx_ret_return_statement(Json::Value* expr, xx_scanner_state 
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "return";
-	if (!(*expr).isNull()) {
+	if (nullptr != expr) {
 		(*ret)["expr"] = expr;
 	}
 
@@ -963,7 +963,7 @@ static Json::Value* xx_ret_declare_variable(xx_parser_token *T, Json::Value* exp
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["variable"] = T->token;
-	if (!(*expr).isNull()) {
+	if (nullptr != expr) {
 		(*ret)["expr"] = expr;
 	}
 
@@ -982,7 +982,7 @@ static Json::Value* xx_ret_new_instance(int dynamic, xx_parser_token *T, Json::V
 	(*ret)["class"] = T->token;
 	(*ret)["dynamic"] = dynamic;
 
-	if (!(*parameters).isNull()) {
+	if (nullptr != parameters) {
 		(*ret)["parameters"] = parameters;
 	}
 
@@ -998,7 +998,7 @@ static Json::Value* xx_ret_throw_exception(Json::Value* expr, xx_scanner_state *
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "throw";
-	if (!(*expr).isNull()) {
+	if (nullptr != expr) {
 		(*ret)["expr"] = expr;
 	}
 
@@ -1017,7 +1017,7 @@ static Json::Value* xx_ret_fcall(int type, xx_parser_token *F, Json::Value* para
 	(*ret)["name"] = F->token;
 	(*ret)["call-type"] = type;
 
-	if (!(*parameters).isNull()) {
+	if (nullptr != parameters) {
 		(*ret)["parameters"] = parameters;
 	}
 
@@ -1037,7 +1037,7 @@ static Json::Value* xx_ret_mcall(int type, Json::Value* O, xx_parser_token *M, J
 	(*ret)["name"] = M->token;
 	(*ret)["call-type"] = type;
 
-	if (!(*parameters).isNull()) {
+	if (nullptr != parameters) {
 		(*ret)["parameters"] = parameters;
 	}
 
@@ -1058,7 +1058,7 @@ static Json::Value* xx_ret_scall(int dynamic_class, xx_parser_token *O, int dyna
 	(*ret)["dynamic"] = dynamic_method;
 	(*ret)["name"] = M->token;
 
-	if (!(*parameters).isNull()) {
+	if (nullptr != parameters) {
 		(*ret)["parameters"] = parameters;
 	}
 
@@ -8096,6 +8096,8 @@ int xx_parse_program(char *program, unsigned int program_length, char *file_path
 		state->active_token = token.opcode;
 
 		state->start_length = (program + program_length - state->start);
+
+		std::cout << token.opcode << std::endl;
 
 		switch (token.opcode) {
 
