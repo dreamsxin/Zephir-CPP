@@ -1,0 +1,19 @@
+#!/bin/bash
+
+rm -f *.o *.lo
+
+#Compile lemon
+if [ ! -f lemon ]; then
+	gcc -w lemon.c -o lemon
+fi
+
+TEST=`re2c -v`
+if [ $? != 2 ]; then
+  echo "error: re2c is not installed"
+  exit 2
+fi
+
+re2c -o scanner.c scanner.re && mv scanner.c scanner.cpp
+./lemon -s parser.lemon && mv parser.c parser.cpp && cat base.template >> parser.cpp
+sed s/"\#line"/"\/\/"/g scanner.cpp > xx && mv -f xx scanner.cpp
+sed s/"#line"/"\/\/"/g parser.cpp > xx && mv -f xx parser.cpp
