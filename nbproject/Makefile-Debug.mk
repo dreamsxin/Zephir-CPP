@@ -68,22 +68,22 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/zephir-cpp: ${OBJECTFILES}
 ${OBJECTDIR}/_ext/1585107349/jsoncpp.o: /home/zhuzx/work/Zephir-CPP/jsoncpp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1585107349
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/jsoncpp.o /home/zhuzx/work/Zephir-CPP/jsoncpp.cpp
+	$(COMPILE.cc) -g -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/jsoncpp.o /home/zhuzx/work/Zephir-CPP/jsoncpp.cpp
 
 ${OBJECTDIR}/_ext/1585107349/parser.o: /home/zhuzx/work/Zephir-CPP/parser.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1585107349
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/parser.o /home/zhuzx/work/Zephir-CPP/parser.cpp
+	$(COMPILE.cc) -g -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/parser.o /home/zhuzx/work/Zephir-CPP/parser.cpp
 
 ${OBJECTDIR}/_ext/1585107349/scanner.o: /home/zhuzx/work/Zephir-CPP/scanner.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1585107349
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/scanner.o /home/zhuzx/work/Zephir-CPP/scanner.cpp
+	$(COMPILE.cc) -g -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/scanner.o /home/zhuzx/work/Zephir-CPP/scanner.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:

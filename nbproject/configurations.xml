@@ -52,6 +52,7 @@
       <compileType>
         <ccTool>
           <incDir>
+            <pElem>/usr/include</pElem>
             <pElem>/usr/include/c++/4.8.2</pElem>
           </incDir>
           <commandLine>-std=c++11</commandLine>

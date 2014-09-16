@@ -529,7 +529,14 @@ static Json::Value* xx_ret_list(Json::Value* list_left, Json::Value* right_list)
 	int i, array_length;
 
 	if (nullptr != list_left) {
-		ret->append(*list_left);
+		array_length = list_left->size();
+		if (list_left->size() > 1) {
+			for (i = 0; i < array_length; i++) {
+				ret->append((*list_left)[i]);
+			}
+		} else {
+			ret->append(*list_left);
+		}
 	}
 
 	if (nullptr != right_list) {

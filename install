@@ -14,6 +14,6 @@ if [ $? != 2 ]; then
 fi
 
 re2c -o scanner.c scanner.re && mv scanner.c scanner.cpp
-./lemon -s parser.lemon && mv parser.c parser.cpp && cat base.template >> parser.cpp
+./lemon -s parser.lemon && mv parser.c parser.cpp && cat parser.template >> parser.cpp
 sed s/"\#line"/"\/\/"/g scanner.cpp > xx && mv -f xx scanner.cpp
 sed s/"#line"/"\/\/"/g parser.cpp > xx && mv -f xx parser.cpp
