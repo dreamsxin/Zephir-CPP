@@ -20,12 +20,15 @@ public:
 	virtual ~Compiler();
 	
 	bool init(const std::string& ns);
-	bool recursiveProcess(const path& source, const path& dest);
+	bool generate();
 
 private:
 	path app_path;
 	path ext_path;
 	std::string ext_namespace;
+
+private:
+	bool recursiveProcess(const path& source, const path& dest);
 };
 
 #endif	/* COMPILER_H */

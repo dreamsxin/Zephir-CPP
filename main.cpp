@@ -50,13 +50,16 @@ int main(int argc, char** argv) {
 		
 		boost::filesystem::path app_path( argv[0] );
 		boost::filesystem::path run_path( boost::filesystem::current_path() );
+		
+		std::cout << "app path: " << app_path.branch_path().branch_path() << std::endl;
+		std::cout << "run_path: " << run_path << std::endl;
 
 		if (vm.count("init")) {
-			std::cout << "app_path: " << app_path.branch_path().branch_path() << std::endl;
-			std::cout << "run_path: " << run_path << std::endl;
 			Compiler compiler(app_path.branch_path().branch_path(), run_path);
 			compiler.init(ns);
 		} else if (vm.count("generate")) {
+			Compiler compiler(app_path.branch_path().branch_path(), run_path);
+			compiler.generate();
 			std::cout << "generate" << std::endl;
 		} else if (vm.count("compile")) {
 			std::cout << "compile" << std::endl;

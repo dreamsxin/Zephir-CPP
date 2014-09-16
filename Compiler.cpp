@@ -6,8 +6,13 @@
  */
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 
+#include <fstream>
+#include <string>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
+
+#include "json/json.h"
 #include "Compiler.h"
 
 using namespace boost::filesystem;
@@ -51,6 +56,29 @@ bool Compiler::init(const std::string& ns) {
 	} else {
 		std::cout << "Already exists directory " << ext_ext_path << std::endl;
 	}
+	
+	Json::Value config;
+	
+	config["name"] = this->ext_namespace;
+	config["namespace"] = this->ext_namespace;
+	config["description"] = "";
+	config["author"] = "";
+	config["version"] = "0.0.1";
+	
+	Json::FastWriter writer;
+    std::string config_file = writer.write(config);
+	
+	path ext_config_path = this->ext_path / "config.json";
+ 
+    std::ofstream ofs;
+    ofs.open(ext_config_path.generic_string());
+    ofs << config_file;
+	
+	return true;
+}
+
+bool Compiler::generate() {
+	return true;
 }
 
 bool Compiler::recursiveProcess(path const & source, path const & dest) {
