@@ -12,6 +12,8 @@
 
 #include <boost/filesystem.hpp>
 
+#include "json/json.h"
+
 using namespace boost::filesystem;
 
 class Compiler {
@@ -26,6 +28,7 @@ private:
 	path app_path;
 	path ext_path;
 	std::string ext_namespace;
+	Json::Value config;
 
 private:
 	bool recursiveProcess(const path& source, const path& dest);

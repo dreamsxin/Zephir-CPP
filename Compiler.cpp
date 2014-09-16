@@ -35,10 +35,23 @@ bool Compiler::init(const std::string& ns) {
 			std::cerr << "Failed to create directory " << this->ext_path << ". Please check your folder permissions" << std::endl;
 			return false;
 		} else {
-			std::cout << "[OK]Success to create directory " << this->ext_path << "." << std::endl;
+			std::cout << "[OK]Success to create directory " << this->ext_path << std::endl;
 		}
 	} else {
 		std::cout << "Already exists directory " << this->ext_path << std::endl;
+	}
+
+	path ext_namespace_path = this->ext_path / boost::to_lower_copy(this->ext_namespace);
+
+	if (!exists(ext_namespace_path)) {
+		if (!create_directory(ext_namespace_path)) {
+			std::cerr << "Failed to create directory " << ext_namespace_path << ". Please check your folder permissions" << std::endl;
+			return false;
+		} else {
+			std::cout << "[OK]Success to create directory " << ext_namespace_path << std::endl;
+		}
+	} else {
+		std::cout << "Already exists directory " << ext_namespace_path << std::endl;
 	}
 
 	path app_ext_path = this->app_path / "ext";
@@ -52,32 +65,50 @@ bool Compiler::init(const std::string& ns) {
 		if (!this->recursiveProcess(app_ext_path, ext_ext_path)) {
 			return false;
 		}
-		std::cout << "[OK]Success to create directory " << ext_ext_path << "." << std::endl;
+		std::cout << "[OK]Success to create directory " << ext_ext_path << std::endl;
 	} else {
 		std::cout << "Already exists directory " << ext_ext_path << std::endl;
 	}
-	
+
 	Json::Value config;
-	
+
 	config["name"] = this->ext_namespace;
 	config["namespace"] = this->ext_namespace;
 	config["description"] = "";
 	config["author"] = "";
 	config["version"] = "0.0.1";
-	
+
 	Json::FastWriter writer;
-    std::string config_file = writer.write(config);
-	
+	std::string config_file = writer.write(config);
+
 	path ext_config_path = this->ext_path / "config.json";
- 
-    std::ofstream ofs;
-    ofs.open(ext_config_path.generic_string());
-    ofs << config_file;
-	
+
+	std::ofstream ofs;
+	ofs.open(ext_config_path.generic_string());
+	ofs << config_file;
+
 	return true;
 }
 
 bool Compiler::generate() {
+	
+	path ext_config_path = this->ext_path / "config.json";
+	if (!exists(ext_config_path)) {
+		std::cerr << "Does not exist " << ext_config_path << std::endl;
+		return false;
+	}
+	
+	std::ifstream ifs;
+	ifs.open(ext_config_path.generic_string());
+
+	Json::Reader reader;
+	if (!reader.parse(ifs, this->config, false)) {
+		std::cerr << "config.json is not valid or there is no Zephir extension initialized in this directory" << std::endl;
+		return false;
+	}
+	
+	std::cout << this->config << std::endl;
+
 	return true;
 }
 
