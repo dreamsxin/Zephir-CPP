@@ -15,21 +15,19 @@
 #include <boost/filesystem.hpp>
 
 #include "parser.h"
-#include "usage/OptionPrinter.hpp"
+#include "Compiler.h"
 
 /*
  * 
  */
 int main(int argc, char** argv) {
 
-	std::string appName = boost::filesystem::basename(argv[0]);
-	std::string arg, ns;
+	std::string ns;
 	
 	boost::program_options::options_description generic_desc("GENERIC");
 	generic_desc.add_options()
 		("help,H", "Describe arguments")
-		("version,V", "Print version and exit")
-		("arg", boost::program_options::value<std::string>(&arg), "Command name");
+		("version,V", "Print version and exit");
 	
 	boost::program_options::options_description command_desc("COMMANDS");
 	command_desc.add_options()
@@ -43,18 +41,21 @@ int main(int argc, char** argv) {
 	
 	boost::program_options::options_description desc;
 	desc.add(generic_desc).add(command_desc);
-	
-	boost::program_options::positional_options_description positionalOptions;
-	positionalOptions.add("arg", 1);
 
 	boost::program_options::variables_map vm;
 	
 	try {
-		boost::program_options::store(boost::program_options::command_line_parser(argc, argv).options(desc).positional(positionalOptions).run(), vm);
+		boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
 		boost::program_options::notify(vm);
+		
+		boost::filesystem::path app_path( argv[0] );
+		boost::filesystem::path run_path( boost::filesystem::current_path() );
 
 		if (vm.count("init")) {
-			std::cout << ns << std::endl;
+			std::cout << "app_path: " << app_path.branch_path().branch_path() << std::endl;
+			std::cout << "run_path: " << run_path << std::endl;
+			Compiler compiler(app_path.branch_path().branch_path(), run_path);
+			compiler.init(ns);
 		} else if (vm.count("generate")) {
 			std::cout << "generate" << std::endl;
 		} else if (vm.count("compile")) {
@@ -63,10 +64,7 @@ int main(int argc, char** argv) {
 			std::cout << "Zephir-CPP version 0.1" << std::endl;
 		} else {
 			std::cout << "Zephir-CPP version 0.1\n\nUsage" << std::endl;
-			myleft::OptionPrinter::printStandardAppDesc(appName, 
-                                                 std::cout, 
-                                                 desc, 
-                                                 &positionalOptions);
+			std::cout << desc << std::endl;
 		}
 	} catch (boost::program_options::required_option& e) {
 		std::cerr << "ERROR: " << e.what() << std::endl << std::endl;

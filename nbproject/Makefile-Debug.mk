@@ -39,6 +39,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/1585107349/scanner.o \
 	${OBJECTDIR}/_ext/842322087/CustomOptionDescription.o \
 	${OBJECTDIR}/_ext/842322087/OptionPrinter.o \
+	${OBJECTDIR}/Compiler.o \
 	${OBJECTDIR}/json/jsoncpp.o \
 	${OBJECTDIR}/main.o
 
@@ -61,11 +62,11 @@ LDLIBSOPTIONS=-lboost_program_options -lboost_system -lboost_filesystem -lboost_
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/zephir-cpp
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk bin/zephir-cpp
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/zephir-cpp: ${OBJECTFILES}
-	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/zephir-cpp ${OBJECTFILES} ${LDLIBSOPTIONS}
+bin/zephir-cpp: ${OBJECTFILES}
+	${MKDIR} -p bin
+	${LINK.cc} -o bin/zephir-cpp ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/_ext/1585107349/parser.o: /home/zhuzx/work/Zephir-CPP/parser.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1585107349
@@ -87,6 +88,11 @@ ${OBJECTDIR}/_ext/842322087/OptionPrinter.o: /home/zhuzx/work/Zephir-CPP/usage/O
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/842322087/OptionPrinter.o /home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp
 
+${OBJECTDIR}/Compiler.o: Compiler.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Compiler.o Compiler.cpp
+
 ${OBJECTDIR}/json/jsoncpp.o: json/jsoncpp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/json
 	${RM} "$@.d"
@@ -103,7 +109,7 @@ ${OBJECTDIR}/main.o: main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/zephir-cpp
+	${RM} bin/zephir-cpp
 
 # Subprojects
 .clean-subprojects:

@@ -12,6 +12,7 @@
         <itemPath>/home/zhuzx/work/Zephir-CPP/include/usage/CustomOptionDescription.hpp</itemPath>
         <itemPath>/home/zhuzx/work/Zephir-CPP/include/usage/OptionPrinter.hpp</itemPath>
       </logicalFolder>
+      <itemPath>Compiler.h</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/parser.h</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.h</itemPath>
     </logicalFolder>
@@ -32,6 +33,7 @@
         <itemPath>/home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp</itemPath>
         <itemPath>/home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp</itemPath>
       </logicalFolder>
+      <itemPath>Compiler.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/parser.cpp</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.cpp</itemPath>
@@ -72,6 +74,7 @@
           <commandLine>-std=c++11</commandLine>
         </ccTool>
         <linkerTool>
+          <output>bin/zephir-cpp</output>
           <linkerLibItems>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
@@ -135,6 +138,10 @@
             tool="1"
             flavor2="0">
       </item>
+      <item path="Compiler.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Compiler.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/json/json-forwards.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/json/json.h" ex="false" tool="3" flavor2="0">
@@ -156,6 +163,7 @@
         </cTool>
         <ccTool>
           <developmentMode>5</developmentMode>
+          <commandLine>-std=c++11</commandLine>
         </ccTool>
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
@@ -163,6 +171,10 @@
         <asmTool>
           <developmentMode>5</developmentMode>
         </asmTool>
+        <linkerTool>
+          <output>zephir-cpp</output>
+          <commandLine>-lboost_program_options -lboost_system -lboost_filesystem -lboost_regex</commandLine>
+        </linkerTool>
       </compileType>
       <item path="/home/zhuzx/work/Zephir-CPP/base.template"
             ex="false"
@@ -218,6 +230,10 @@
             ex="false"
             tool="1"
             flavor2="0">
+      </item>
+      <item path="Compiler.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Compiler.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/json/json-forwards.h" ex="false" tool="3" flavor2="0">
       </item>
