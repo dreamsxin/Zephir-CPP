@@ -5,8 +5,12 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="json" displayName="json" projectFiles="true">
-        <itemPath>/home/zhuzx/work/Zephir-CPP/json/json-forwards.h</itemPath>
-        <itemPath>/home/zhuzx/work/Zephir-CPP/json/json.h</itemPath>
+        <itemPath>include/json/json-forwards.h</itemPath>
+        <itemPath>include/json/json.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="usage" displayName="usage" projectFiles="true">
+        <itemPath>/home/zhuzx/work/Zephir-CPP/include/usage/CustomOptionDescription.hpp</itemPath>
+        <itemPath>/home/zhuzx/work/Zephir-CPP/include/usage/OptionPrinter.hpp</itemPath>
       </logicalFolder>
       <itemPath>/home/zhuzx/work/Zephir-CPP/parser.h</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.h</itemPath>
@@ -21,7 +25,13 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>/home/zhuzx/work/Zephir-CPP/jsoncpp.cpp</itemPath>
+      <logicalFolder name="json" displayName="json" projectFiles="true">
+        <itemPath>json/jsoncpp.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="usage" displayName="usage" projectFiles="true">
+        <itemPath>/home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp</itemPath>
+        <itemPath>/home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp</itemPath>
+      </logicalFolder>
       <itemPath>main.cpp</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/parser.cpp</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.cpp</itemPath>
@@ -40,6 +50,9 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>/home/zhuzx/work/Zephir-CPP/json</Elem>
+    <Elem>/home/zhuzx/work/Zephir-CPP/usage</Elem>
+    <Elem>/home/zhuzx/work/Zephir-CPP/include/usage</Elem>
+    <Elem>include/json</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -52,6 +65,7 @@
       <compileType>
         <ccTool>
           <incDir>
+            <pElem>include</pElem>
             <pElem>/usr/include</pElem>
             <pElem>/usr/include/c++/4.8.2</pElem>
           </incDir>
@@ -62,6 +76,7 @@
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
+            <linkerLibLibItem>boost_regex</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -70,19 +85,14 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/json/json-forwards.h"
+      <item path="/home/zhuzx/work/Zephir-CPP/include/usage/CustomOptionDescription.hpp"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/json/json.h"
+      <item path="/home/zhuzx/work/Zephir-CPP/include/usage/OptionPrinter.hpp"
             ex="false"
             tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/jsoncpp.cpp"
-            ex="false"
-            tool="1"
             flavor2="0">
       </item>
       <item path="/home/zhuzx/work/Zephir-CPP/parser.cpp"
@@ -114,6 +124,22 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="/home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="/home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="include/json/json-forwards.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/json/json.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="json/jsoncpp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -143,19 +169,14 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/json/json-forwards.h"
+      <item path="/home/zhuzx/work/Zephir-CPP/include/usage/CustomOptionDescription.hpp"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/json/json.h"
+      <item path="/home/zhuzx/work/Zephir-CPP/include/usage/OptionPrinter.hpp"
             ex="false"
             tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/jsoncpp.cpp"
-            ex="false"
-            tool="1"
             flavor2="0">
       </item>
       <item path="/home/zhuzx/work/Zephir-CPP/parser.cpp"
@@ -187,6 +208,22 @@
             ex="false"
             tool="3"
             flavor2="0">
+      </item>
+      <item path="/home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="/home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="include/json/json-forwards.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="include/json/json.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="json/jsoncpp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>

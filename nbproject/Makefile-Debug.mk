@@ -35,9 +35,11 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1585107349/jsoncpp.o \
 	${OBJECTDIR}/_ext/1585107349/parser.o \
 	${OBJECTDIR}/_ext/1585107349/scanner.o \
+	${OBJECTDIR}/_ext/842322087/CustomOptionDescription.o \
+	${OBJECTDIR}/_ext/842322087/OptionPrinter.o \
+	${OBJECTDIR}/json/jsoncpp.o \
 	${OBJECTDIR}/main.o
 
 
@@ -55,7 +57,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-lboost_program_options -lboost_system -lboost_filesystem
+LDLIBSOPTIONS=-lboost_program_options -lboost_system -lboost_filesystem -lboost_regex
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -65,25 +67,35 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/zephir-cpp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/zephir-cpp ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/_ext/1585107349/jsoncpp.o: /home/zhuzx/work/Zephir-CPP/jsoncpp.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1585107349
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/jsoncpp.o /home/zhuzx/work/Zephir-CPP/jsoncpp.cpp
-
 ${OBJECTDIR}/_ext/1585107349/parser.o: /home/zhuzx/work/Zephir-CPP/parser.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1585107349
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/parser.o /home/zhuzx/work/Zephir-CPP/parser.cpp
+	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/parser.o /home/zhuzx/work/Zephir-CPP/parser.cpp
 
 ${OBJECTDIR}/_ext/1585107349/scanner.o: /home/zhuzx/work/Zephir-CPP/scanner.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1585107349
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/scanner.o /home/zhuzx/work/Zephir-CPP/scanner.cpp
+	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/scanner.o /home/zhuzx/work/Zephir-CPP/scanner.cpp
+
+${OBJECTDIR}/_ext/842322087/CustomOptionDescription.o: /home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/842322087
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/842322087/CustomOptionDescription.o /home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp
+
+${OBJECTDIR}/_ext/842322087/OptionPrinter.o: /home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/842322087
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/842322087/OptionPrinter.o /home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp
+
+${OBJECTDIR}/json/jsoncpp.o: json/jsoncpp.cpp 
+	${MKDIR} -p ${OBJECTDIR}/json
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/json/jsoncpp.o json/jsoncpp.cpp
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:

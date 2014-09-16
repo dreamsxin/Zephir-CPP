@@ -6,11 +6,14 @@
             <name>Zephir-CPP</name>
             <c-extensions/>
             <cpp-extensions>cpp</cpp-extensions>
-            <header-extensions>h</header-extensions>
+            <header-extensions>h,hpp</header-extensions>
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>/home/zhuzx/work/Zephir-CPP/json</sourceRootElem>
+                <sourceRootElem>/home/zhuzx/work/Zephir-CPP/usage</sourceRootElem>
+                <sourceRootElem>/home/zhuzx/work/Zephir-CPP/include/usage</sourceRootElem>
+                <sourceRootElem>include/json</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

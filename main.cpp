@@ -15,39 +15,58 @@
 #include <boost/filesystem.hpp>
 
 #include "parser.h"
+#include "usage/OptionPrinter.hpp"
 
 /*
  * 
  */
 int main(int argc, char** argv) {
 
-	std::string appname = boost::filesystem::basename(argv[0]);
+	std::string appName = boost::filesystem::basename(argv[0]);
+	std::string arg, ns;
 	
-	boost::program_options::options_description desc("Zephir-CPP version 0.1\n\nUsage");
-	desc.add_options()
-			("help,h", "describe arguments")
-			("init", boost::program_options::value<std::string>(), "Initializes a Zephir extension")
+	boost::program_options::options_description generic_desc("GENERIC");
+	generic_desc.add_options()
+		("help,H", "Describe arguments")
+		("version,V", "Print version and exit")
+		("arg", boost::program_options::value<std::string>(&arg), "Command name");
+	
+	boost::program_options::options_description command_desc("COMMANDS");
+	command_desc.add_options()
+			("init", boost::program_options::value<std::string>(&ns), "Initializes a Zephir extension")
 			("generate", "Generates C code from the Zephir code")
 			("compile", "Compile a Zephir extension")
 			("install", "Installs the extension (requires root password)")
 			("build", "Generate/Compile/Install a Zephir extension")
 			("fullclean", "Cleans the generated object files in compilation")
 			("clean", "Cleans the generated object files in compilation");
+	
+	boost::program_options::options_description desc;
+	desc.add(generic_desc).add(command_desc);
+	
+	boost::program_options::positional_options_description positionalOptions;
+	positionalOptions.add("arg", 1);
 
 	boost::program_options::variables_map vm;
 	
 	try {
-		boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+		boost::program_options::store(boost::program_options::command_line_parser(argc, argv).options(desc).positional(positionalOptions).run(), vm);
 		boost::program_options::notify(vm);
 
-		if (vm.count("generate")) {
-			std::cout << "generate" << "\n";
+		if (vm.count("init")) {
+			std::cout << ns << std::endl;
+		} else if (vm.count("generate")) {
+			std::cout << "generate" << std::endl;
 		} else if (vm.count("compile")) {
-			std::cout << "compile" << "\n";
-		} else if (vm.count("help")) {
-			std::cout << desc << "\n";
+			std::cout << "compile" << std::endl;
+		} else if (vm.count("version")) {
+			std::cout << "Zephir-CPP version 0.1" << std::endl;
 		} else {
-			std::cout << desc << "\n";
+			std::cout << "Zephir-CPP version 0.1\n\nUsage" << std::endl;
+			myleft::OptionPrinter::printStandardAppDesc(appName, 
+                                                 std::cout, 
+                                                 desc, 
+                                                 &positionalOptions);
 		}
 	} catch (boost::program_options::required_option& e) {
 		std::cerr << "ERROR: " << e.what() << std::endl << std::endl;
