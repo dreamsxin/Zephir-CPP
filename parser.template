@@ -49,7 +49,7 @@ static void *xx_wrapper_alloc(size_t bytes){
  * Wrapper to free memory within the parser
  */
 static void xx_wrapper_free(void *pointer){
-	//free(pointer);
+	free(pointer);
 }
 
 /**

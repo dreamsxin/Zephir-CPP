@@ -20,8 +20,8 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
-      <itemPath>/home/zhuzx/work/Zephir-CPP/base.template</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/parser.lemon</itemPath>
+      <itemPath>parser.template</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.re</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
@@ -85,11 +85,6 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="/home/zhuzx/work/Zephir-CPP/base.template"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="/home/zhuzx/work/Zephir-CPP/include/usage/CustomOptionDescription.hpp"
             ex="false"
             tool="3"
@@ -155,6 +150,8 @@
       <item path="json/jsoncpp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="parser.template" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -182,11 +179,6 @@
           <commandLine>-lboost_program_options -lboost_system -lboost_filesystem -lboost_regex</commandLine>
         </linkerTool>
       </compileType>
-      <item path="/home/zhuzx/work/Zephir-CPP/base.template"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="/home/zhuzx/work/Zephir-CPP/include/usage/CustomOptionDescription.hpp"
             ex="false"
             tool="3"
@@ -252,6 +244,8 @@
       <item path="json/jsoncpp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="parser.template" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
