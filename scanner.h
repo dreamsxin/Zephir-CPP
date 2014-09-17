@@ -152,6 +152,8 @@
 
 #define XX_T_ELSEIF 452
 
+#include <string>
+
 /* List of tokens and their names */
 typedef struct _xx_token_names {
 	unsigned int code;
@@ -173,7 +175,7 @@ typedef struct _xx_scanner_state {
 /* Extra information tokens */
 typedef struct _xx_scanner_token {
 	int opcode;
-	char *value;
+	std::string value;
 	int len;
 } xx_scanner_token;
 

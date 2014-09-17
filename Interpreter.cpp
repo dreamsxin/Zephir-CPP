@@ -23,6 +23,8 @@ bool Interpreter::run(const std::string& filename) {
 
 	Json::Value *value = this->compiler.parse(filename);
 
-	std::cout << *(value) << std::endl;
+	std::cout << *value << std::endl;
+	
+	delete value;
 	std::cout << "run" << std::endl;
 }

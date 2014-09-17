@@ -27,9 +27,9 @@
 
 int xx_get_token(xx_scanner_state *s, xx_scanner_token *token) {
 
-	char next, *q = YYCURSOR, *start = YYCURSOR;
+	char *q = YYCURSOR, *start = YYCURSOR;
 	int status = XX_SCANNER_RETCODE_IMPOSSIBLE;
-	int is_constant = 0, j;
+	int is_constant = 0;
 
 	while (XX_SCANNER_RETCODE_IMPOSSIBLE == status) {
 
@@ -40,7 +40,7 @@ int xx_get_token(xx_scanner_state *s, xx_scanner_token *token) {
 		INTEGER = ([\-]?[0-9]+)|([\-]?[0][x][0-9A-Fa-f]+);
 		INTEGER {
 			token->opcode = XX_T_INTEGER;
-			token->value = strndup(start, YYCURSOR - start);
+			token->value = std::string(start, YYCURSOR - start);
 			token->len = YYCURSOR - start;
 			s->active_char += (YYCURSOR - start);
 			q = YYCURSOR;
@@ -50,7 +50,7 @@ int xx_get_token(xx_scanner_state *s, xx_scanner_token *token) {
 		DOUBLE = ([\-]?[0-9]+[\.][0-9]+);
 		DOUBLE {
 			token->opcode = XX_T_DOUBLE;
-			token->value = strndup(start, YYCURSOR - start);
+			token->value = std::string(start, YYCURSOR - start);
 			token->len = YYCURSOR - start;
 			s->active_char += (YYCURSOR - start);
 			q = YYCURSOR;
@@ -474,7 +474,7 @@ int xx_get_token(xx_scanner_state *s, xx_scanner_token *token) {
 		SCHAR = (['] ([\\][']|[\\].|[\001-\377]\[\\'])* [']);
 		SCHAR {
 			token->opcode = XX_T_CHAR;
-			token->value = strndup(q, YYCURSOR - q - 1);
+			token->value = std::string(q, YYCURSOR - q - 1);
 			token->len = YYCURSOR - q - 1;
 			s->active_char += (YYCURSOR - start);
 			q = YYCURSOR;
@@ -484,7 +484,7 @@ int xx_get_token(xx_scanner_state *s, xx_scanner_token *token) {
 		STRING = (["] ([\\]["]|[\\].|[\001-\377]\[\\"])* ["]);
 		STRING {
 			token->opcode = XX_T_STRING;
-			token->value = strndup(q, YYCURSOR - q - 1);
+			token->value = std::string(q, YYCURSOR - q - 1);
 			token->len = YYCURSOR - q - 1;
 			s->active_char += (YYCURSOR - start);
 			q = YYCURSOR;
@@ -494,7 +494,7 @@ int xx_get_token(xx_scanner_state *s, xx_scanner_token *token) {
 		COMMENT = ("/*"([^*]+|[*]+[^/*])*[*]*"*/");
 		COMMENT {
 			token->opcode = XX_T_COMMENT;
-			token->value = strndup(q, YYCURSOR - q - 1);
+			token->value = std::string(q, YYCURSOR - q - 1);
 			token->len = YYCURSOR - q - 1;
 			{
 				int k, ch = s->active_char;
@@ -522,7 +522,7 @@ int xx_get_token(xx_scanner_state *s, xx_scanner_token *token) {
 		CBLOCK = ("%{"([^}]+|[}]+[^%{])*"}%");
 		CBLOCK {
 			token->opcode = XX_T_CBLOCK;
-			token->value = strndup(q+1, YYCURSOR - q - 3 );
+			token->value = std::string(q+1, YYCURSOR - q - 3 );
 			token->len = YYCURSOR - q - 3;
 			{
 				int k, ch = s->active_char;
@@ -544,73 +544,59 @@ int xx_get_token(xx_scanner_state *s, xx_scanner_token *token) {
 		IDENTIFIER {
 
 			if (start[0] == '$') {
-				token->value = strndup(start + 1, YYCURSOR - start - 1);
+				token->value = std::string(start + 1, YYCURSOR - start - 1);
 				token->len = YYCURSOR - start - 1;
 				s->active_char += (YYCURSOR - start - 1);
 			} else {
-				token->value = strndup(start, YYCURSOR - start);
+				token->value = std::string(start, YYCURSOR - start);
 				token->len = YYCURSOR - start;
 				s->active_char += (YYCURSOR - start);
 			}
 			q = YYCURSOR;
 
 			if (token->len > 3) {
-
-				if (!memcmp(token->value, "_GET", sizeof("_GET")-1)) {
+				if (token->value.compare("_GET") == 0) {
+					token->opcode = XX_T_IDENTIFIER;
+					return 0;
+				} else if (token->value.compare("_POST") == 0) {
+					token->opcode = XX_T_IDENTIFIER;
+					return 0;
+				} else if (token->value.compare("_REQUEST") == 0) {
+					token->opcode = XX_T_IDENTIFIER;
+					return 0;
+				} else if (token->value.compare("_COOKIE") == 0) {
+					token->opcode = XX_T_IDENTIFIER;
+					return 0;
+				} else if (token->value.compare("_SERVER") == 0) {
+					token->opcode = XX_T_IDENTIFIER;
+					return 0;
+				} else if (token->value.compare("_SESSION") == 0) {
+					token->opcode = XX_T_IDENTIFIER;
+					return 0;
+				} else if (token->value.compare("_FILES") == 0) {
 					token->opcode = XX_T_IDENTIFIER;
 					return 0;
 				}
-
-				if (!memcmp(token->value, "_POST", sizeof("_POST")-1)) {
-					token->opcode = XX_T_IDENTIFIER;
-					return 0;
-				}
-
-				if (!memcmp(token->value, "_REQUEST", sizeof("_REQUEST")-1)) {
-					token->opcode = XX_T_IDENTIFIER;
-					return 0;
-				}
-
-				if (!memcmp(token->value, "_COOKIE", sizeof("_COOKIE")-1)) {
-					token->opcode = XX_T_IDENTIFIER;
-					return 0;
-				}
-
-				if (!memcmp(token->value, "_SERVER", sizeof("_SERVER")-1)) {
-					token->opcode = XX_T_IDENTIFIER;
-					return 0;
-				}
-
-				if (!memcmp(token->value, "_SESSION", sizeof("_SESSION")-1)) {
-					token->opcode = XX_T_IDENTIFIER;
-					return 0;
-				}
-
-				if (!memcmp(token->value, "_FILES", sizeof("_FILES")-1)) {
-					token->opcode = XX_T_IDENTIFIER;
-					return 0;
-				}
-			}
-
-			if (token->len == 1 && !memcmp(token->value, "_", sizeof("_")-1)) {
+			} else if (token->len == 3 && token->value.compare("_") == 0) {
 				token->opcode = XX_T_IDENTIFIER;
 				return 0;
 			}
 
 			is_constant = 1;
-			for (j = 0; j < token->len; j++) {
-				if (!((token->value[j] >= 'A' && token->value[j] <= 'Z') || (token->value[j] >= '0' && token->value[j] <= '9') || token->value[j] == '_')) {
+			std::string::iterator it;
+			for (it = token->value.begin(); it < token->value.end(); it++) {
+				if (std::islower(*it)) {
 					is_constant = 0;
 					break;
 				}
-			};
+			}
+
 			if (is_constant) {
 				token->opcode = XX_T_CONSTANT;
 			} else {
 				token->opcode = XX_T_IDENTIFIER;
 			}
 			return 0;
-
 		}
 
 		"(" {

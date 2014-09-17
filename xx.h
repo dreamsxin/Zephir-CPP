@@ -18,7 +18,7 @@
 
 typedef struct _xx_parser_token {
 	int opcode;
-	char *token;
+	std::string token;
 	int token_len;
 	int free_flag;
 } xx_parser_token;

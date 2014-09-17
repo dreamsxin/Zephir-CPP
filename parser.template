@@ -38,19 +38,6 @@ const xx_token_names xx_tokens[] =
 	{  0, NULL }
 };
 
-char *strndup(const char *s, size_t len)
-{
-    if (s) {
-        char *ns = (char *)malloc(len + 1);
-        if (ns) {
-            ns[len] = 0;
-            return strncpy(ns, s, len);
-        }
-    }
-
-    return NULL;
-}
-
 /**
  * Wrapper to alloc memory within the parser
  */
@@ -72,43 +59,16 @@ static void xx_parse_with_token(void* xx_parser, int opcode, int parsercode, xx_
 
 	xx_parser_token *pToken;
 
-	pToken = (xx_parser_token *)malloc(sizeof(xx_parser_token));
-	pToken->opcode = opcode;
+	pToken = new xx_parser_token();
+	pToken->opcode = opcode;;
 	pToken->token = token->value;
 	pToken->token_len = token->len;
 	pToken->free_flag = 1;
 
 	xx_(xx_parser, parsercode, pToken, parser_status);
 
-	token->value = NULL;
+	token->value.clear();
 	token->len = 0;
-}
-
-/**
- * Creates an error message when it's triggered by the scanner
- */
-static void xx_scanner_error_msg(xx_parser_status *parser_status){
-
-	/*char *error, *error_part;
-	XX_scanner_state *state = parser_status->scanner_state;
-
-	ALLOC_INIT_ZVAL(*error_msg);
-	if (state->start) {
-		error = emalloc(sizeof(char) * (128 + state->start_length +  Z_STRLEN_P(state->active_file)));
-		if (state->start_length > 16) {
-			error_part = estrndup(state->start, 16);
-			sprintf(error, "Parsing error before '%s...' in %s on line %d", error_part, Z_STRVAL_P(state->active_file), state->active_line);
-			efree(error_part);
-		} else {
-			sprintf(error, "Parsing error before '%s' in %s on line %d", state->start, Z_STRVAL_P(state->active_file), state->active_line);
-		}
-		ZVAL_STRING(*error_msg, error, 1);
-	} else {
-		error = emalloc(sizeof(char) * (64 + Z_STRLEN_P(state->active_file)));
-		sprintf(error, "Parsing error near to EOF in %s", Z_STRVAL_P(state->active_file));
-		ZVAL_STRING(*error_msg, error, 1);
-	}
-	efree(error);*/
 }
 
 /**
@@ -116,10 +76,9 @@ static void xx_scanner_error_msg(xx_parser_status *parser_status){
  */
 Json::Value *xx_parse_program(char *program, unsigned int program_length, char *file_path) {
 
-	char *error;
 	xx_scanner_state *state;
 	xx_scanner_token token;
-	int scanner_status, status = SUCCESS, start_lines;
+	int scanner_status, status = SUCCESS;
 	xx_parser_status *parser_status = NULL;
 	void* xx_parser;
 
@@ -135,8 +94,8 @@ Json::Value *xx_parse_program(char *program, unsigned int program_length, char *
 	 */
 	xx_parser = xx_Alloc(xx_wrapper_alloc);
 
-	parser_status = (xx_parser_status *)malloc(sizeof(xx_parser_status));
-	state = (xx_scanner_state *)malloc(sizeof(xx_scanner_state));
+	parser_status = new xx_parser_status();
+	state = new xx_scanner_state();
 
 	parser_status->status = XX_PARSING_OK;
 	parser_status->scanner_state = state;
@@ -534,13 +493,6 @@ Json::Value *xx_parse_program(char *program, unsigned int program_length, char *
 			default:
 				parser_status->status = XX_PARSING_FAILED;
 				fprintf(stderr, "Scanner: unknown opcode %d\n", token.opcode);
-				/*if (!*error_msg) {
-					error = emalloc(sizeof(char) * (48 + Z_STRLEN_P(state->active_file)));
-					sprintf(error, "Scanner: unknown opcode %d on in %s line %d", token.opcode, Z_STRVAL_P(state->active_file), state->active_line);
-					ALLOC_INIT_ZVAL(*error_msg);
-					ZVAL_STRING(*error_msg, error, 1);
-					efree(error);
-				}*/
 				break;
 		}
 
@@ -582,12 +534,12 @@ Json::Value *xx_parse_program(char *program, unsigned int program_length, char *
 
 	xx_Free(xx_parser, xx_wrapper_free);
 
-	Json::Value *ret = new Json::Value();
+	Json::Value *ret;
 
 	if (status != FAILURE) {
 		if (parser_status->status == XX_PARSING_OK) {
 			if (parser_status->ret) {
-				(*ret) = *(parser_status->ret);
+				ret = parser_status->ret;
 				std::cout << *(parser_status->ret) << std::endl;
 			}
 		}
@@ -595,8 +547,8 @@ Json::Value *xx_parse_program(char *program, unsigned int program_length, char *
 		ret = NULL;
 	}
 
-	free(parser_status);
-	free(state);
+	delete parser_status;
+	delete state;
 
 	return ret;
 }
