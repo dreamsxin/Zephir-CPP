@@ -114,7 +114,7 @@ static void xx_scanner_error_msg(xx_parser_status *parser_status){
 /**
  * Parses a comment returning an intermediate array representation
  */
-int xx_parse_program(char *program, unsigned int program_length, char *file_path) {
+Json::Value *xx_parse_program(char *program, unsigned int program_length, char *file_path) {
 
 	char *error;
 	xx_scanner_state *state;
@@ -126,12 +126,8 @@ int xx_parse_program(char *program, unsigned int program_length, char *file_path
 	/**
 	 * Check if the program has any length
 	 */
-	if (!program_length) {
-		return FAILURE;
-	}
-
-	if (program_length < 2) {
-		return SUCCESS;
+	if (!program_length || program_length < 2) {
+		return NULL;
 	}
 
 	/**
@@ -582,39 +578,25 @@ int xx_parse_program(char *program, unsigned int program_length, char *file_path
 
 	if (parser_status->status != XX_PARSING_OK) {
 		status = FAILURE;
-		/*if (parser_status->syntax_error) {
-			if (!*error_msg) {
-				ALLOC_INIT_ZVAL(*error_msg);
-				ZVAL_STRING(*error_msg, parser_status->syntax_error, 1);
-			}
-			efree(parser_status->syntax_error);
-		}*/
-		//std::cerr << "error!" std::endl;
 	}
 
 	xx_Free(xx_parser, xx_wrapper_free);
 
+	Json::Value *ret = new Json::Value();
+
 	if (status != FAILURE) {
 		if (parser_status->status == XX_PARSING_OK) {
-			//std::cout << parser_status->ret << std::endl;
-			/*if (parser_status->ret) {
-				ZVAL_ZVAL(*result, parser_status->ret, 0, 0);
-				ZVAL_NULL(parser_status->ret);
-				zval_ptr_dtor(&parser_status->ret);
-			} else {
-				array_init(*result);
-			}*/
+			if (parser_status->ret) {
+				(*ret) = *(parser_status->ret);
+				std::cout << *(parser_status->ret) << std::endl;
+			}
 		}
+	} else {
+		ret = NULL;
 	}
-
-	if (parser_status->ret) {
-		std::cout << *(parser_status->ret) << std::endl;
-	}
-
-	//efree(Z_STRVAL(processed_comment));*/
 
 	free(parser_status);
 	free(state);
 
-	return status;
+	return ret;
 }

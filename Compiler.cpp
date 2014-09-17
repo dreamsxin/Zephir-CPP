@@ -7,19 +7,19 @@
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 
 #include <fstream>
-#include <string>
+#include <sstream>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
 
-#include "json/json.h"
+#include "parser.h"
 #include "Compiler.h"
 
-using namespace boost::filesystem;
+Compiler::Compiler() {
+}
 
-Compiler::Compiler(const path& app_path, const path& ext_path) {
+Compiler::Compiler(const path& app_path, const path& run_path) {
 	this->app_path = app_path;
-	this->ext_path = ext_path;
+	this->run_path = run_path;
 }
 
 Compiler::~Compiler() {
@@ -28,20 +28,20 @@ Compiler::~Compiler() {
 bool Compiler::init(const std::string& ns) {
 	this->ext_namespace = ns;
 
-	this->ext_path /= boost::to_lower_copy(this->ext_namespace);
+	this->run_path /= boost::to_lower_copy(this->ext_namespace);
 
-	if (!exists(this->ext_path)) {
-		if (!create_directory(this->ext_path)) {
-			std::cerr << "Failed to create directory " << this->ext_path << ". Please check your folder permissions" << std::endl;
+	if (!exists(this->run_path)) {
+		if (!create_directory(this->run_path)) {
+			std::cerr << "Failed to create directory " << this->run_path << ". Please check your folder permissions" << std::endl;
 			return false;
 		} else {
-			std::cout << "[OK]Success to create directory " << this->ext_path << std::endl;
+			std::cout << "[OK]Success to create directory " << this->run_path << std::endl;
 		}
 	} else {
-		std::cout << "Already exists directory " << this->ext_path << std::endl;
+		std::cout << "Already exists directory " << this->run_path << std::endl;
 	}
 
-	path ext_namespace_path = this->ext_path / boost::to_lower_copy(this->ext_namespace);
+	path ext_namespace_path = this->run_path / boost::to_lower_copy(this->ext_namespace);
 
 	if (!exists(ext_namespace_path)) {
 		if (!create_directory(ext_namespace_path)) {
@@ -54,20 +54,20 @@ bool Compiler::init(const std::string& ns) {
 		std::cout << "Already exists directory " << ext_namespace_path << std::endl;
 	}
 
-	path app_ext_path = this->app_path / "ext";
-	if (!exists(app_ext_path)) {
-		std::cerr << "Does not exist or is not a directory " << app_ext_path << std::endl;
+	path app_run_path = this->app_path / "ext";
+	if (!exists(app_run_path)) {
+		std::cerr << "Does not exist or is not a directory " << app_run_path << std::endl;
 		return false;
 	}
 
-	path ext_ext_path = this->ext_path / "ext";
-	if (!exists(ext_ext_path)) {
-		if (!this->recursiveProcess(app_ext_path, ext_ext_path)) {
+	path ext_run_path = this->run_path / "ext";
+	if (!exists(ext_run_path)) {
+		if (!this->recursiveProcess(app_run_path, ext_run_path)) {
 			return false;
 		}
-		std::cout << "[OK]Success to create directory " << ext_ext_path << std::endl;
+		std::cout << "[OK]Success to create directory " << ext_run_path << std::endl;
 	} else {
-		std::cout << "Already exists directory " << ext_ext_path << std::endl;
+		std::cout << "Already exists directory " << ext_run_path << std::endl;
 	}
 
 	Json::Value config;
@@ -81,7 +81,7 @@ bool Compiler::init(const std::string& ns) {
 	Json::FastWriter writer;
 	std::string config_file = writer.write(config);
 
-	path ext_config_path = this->ext_path / "config.json";
+	path ext_config_path = this->run_path / "config.json";
 
 	std::ofstream ofs;
 	ofs.open(ext_config_path.generic_string());
@@ -91,13 +91,13 @@ bool Compiler::init(const std::string& ns) {
 }
 
 bool Compiler::generate() {
-	
-	path ext_config_path = this->ext_path / "config.json";
+
+	path ext_config_path = this->run_path / "config.json";
 	if (!exists(ext_config_path)) {
 		std::cerr << "Does not exist " << ext_config_path << std::endl;
 		return false;
 	}
-	
+
 	std::ifstream ifs;
 	ifs.open(ext_config_path.generic_string());
 
@@ -106,13 +106,33 @@ bool Compiler::generate() {
 		std::cerr << "config.json is not valid or there is no Zephir extension initialized in this directory" << std::endl;
 		return false;
 	}
-	
+
 	std::cout << this->config << std::endl;
 
 	return true;
 }
 
-bool Compiler::recursiveProcess(path const & source, path const & dest) {
+Json::Value *Compiler::parse(const std::string& filename) {
+
+	path full_path = this->run_path / filename;
+	
+	if (!exists(full_path)) {
+		std::cerr << "Does not exist " << full_path << std::endl;
+		return NULL;
+	}
+
+	std::ifstream ifs;
+	ifs.open(full_path.generic_string());
+
+	std::ostringstream ost;
+	ost << ifs.rdbuf();
+	
+	std::string program = ost.str();
+
+	return xx_parse_program((char *)program.c_str(), program.length(), (char *)filename.c_str());
+}
+
+bool Compiler::recursiveProcess(const path& source, const path& dest) {
 	try {
 		if (!exists(source) || !is_directory(source)) {
 			std::cerr << "Source directory " << source.string() << " does not exist or is not a directory." << std::endl;

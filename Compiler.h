@@ -18,20 +18,22 @@ using namespace boost::filesystem;
 
 class Compiler {
 public:
-	Compiler(const path& app_path, const path& ext_path);
+	Compiler();
+	Compiler(const path& app_path, const path& run_path);
 	virtual ~Compiler();
 	
 	bool init(const std::string& ns);
 	bool generate();
-
-private:
-	path app_path;
-	path ext_path;
-	std::string ext_namespace;
-	Json::Value config;
+	Json::Value *parse(const std::string& filename);
 
 private:
 	bool recursiveProcess(const path& source, const path& dest);
+
+private:
+	path app_path;
+	path run_path;
+	std::string ext_namespace;
+	Json::Value config;
 };
 
 #endif	/* COMPILER_H */

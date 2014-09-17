@@ -40,6 +40,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/842322087/CustomOptionDescription.o \
 	${OBJECTDIR}/_ext/842322087/OptionPrinter.o \
 	${OBJECTDIR}/Compiler.o \
+	${OBJECTDIR}/Interpreter.o \
 	${OBJECTDIR}/json/jsoncpp.o \
 	${OBJECTDIR}/main.o
 
@@ -92,6 +93,11 @@ ${OBJECTDIR}/Compiler.o: Compiler.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Compiler.o Compiler.cpp
+
+${OBJECTDIR}/Interpreter.o: Interpreter.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Interpreter.o Interpreter.cpp
 
 ${OBJECTDIR}/json/jsoncpp.o: json/jsoncpp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/json

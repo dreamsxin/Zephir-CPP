@@ -16,13 +16,14 @@
 
 #include "parser.h"
 #include "Compiler.h"
+#include "Interpreter.h"
 
 /*
  * 
  */
 int main(int argc, char** argv) {
 
-	std::string ns;
+	std::string filename, ns;
 	
 	boost::program_options::options_description generic_desc("GENERIC");
 	generic_desc.add_options()
@@ -31,6 +32,7 @@ int main(int argc, char** argv) {
 	
 	boost::program_options::options_description command_desc("COMMANDS");
 	command_desc.add_options()
+			("run", boost::program_options::value<std::string>(&filename), "Execution Zephir code")
 			("init", boost::program_options::value<std::string>(&ns), "Initializes a Zephir extension")
 			("generate", "Generates C code from the Zephir code")
 			("compile", "Compile a Zephir extension")
@@ -54,7 +56,12 @@ int main(int argc, char** argv) {
 		std::cout << "app path: " << app_path.branch_path().branch_path() << std::endl;
 		std::cout << "run_path: " << run_path << std::endl;
 
-		if (vm.count("init")) {
+		if (vm.count("run")) {
+			Compiler compiler(app_path.branch_path().branch_path(), run_path);
+
+			Interpreter Interpreter(compiler);
+			Interpreter.run(filename);
+		} else if (vm.count("init")) {
 			Compiler compiler(app_path.branch_path().branch_path(), run_path);
 			compiler.init(ns);
 		} else if (vm.count("generate")) {
