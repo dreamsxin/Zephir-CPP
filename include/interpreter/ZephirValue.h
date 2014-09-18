@@ -35,19 +35,10 @@ public:
 	void setType(const ZephirValue::TYPE& type);
 	void setValue(const boost::any& value);
 
-	ZephirValue::TYPE getType() const;
-	boost::any getValue() const;
+	ZephirValue::TYPE getType();
+	boost::any getValue();
 
-	friend inline std::ostream& operator<<(std::ostream& out, const ZephirValue& value) {
-		switch (value.getType()) {
-			case ZephirValue::TYPE::STRING_VALUE:
-				out << boost::any_cast<std::string>(value.getValue()) << std::endl;
-				break;
-			default:
-				break;
-		}
-		return out;
-	}
+	friend std::ostream& operator<<(std::ostream& out, const ZephirValue& value);
 
 private:
 	ZephirValue::TYPE type;

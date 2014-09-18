@@ -33,11 +33,22 @@ void ZephirValue::setValue(const boost::any& value) {
 	this->value = value;
 }
 
-ZephirValue::TYPE ZephirValue::getType() const {
+ZephirValue::TYPE ZephirValue::getType() {
 	return this->type;
 }
 
-boost::any ZephirValue::getValue() const {
+boost::any ZephirValue::getValue() {
 	return this->value;
+}
+
+std::ostream& operator<<(std::ostream& out, const ZephirValue& value) {
+	switch (value.type) {
+		case ZephirValue::TYPE::STRING_VALUE:
+			out << boost::any_cast<std::string>(value.value) << std::endl;
+			break;
+		default:
+			break;
+	}
+	return out;
 }
 
