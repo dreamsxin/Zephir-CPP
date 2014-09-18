@@ -21,9 +21,11 @@ Interpreter::~Interpreter() {
 
 bool Interpreter::run(const std::string& filename) {
 
-	std::cout << "run" << std::endl;
-
 	this->statements = this->compiler.parse(filename);
+
+	std::cout << this->statements << std::endl;
+
+	std::cout << "run" << std::endl;
 
 	StatementResult ret = this->executeStatements(this->statements, nullptr);
 
@@ -31,8 +33,6 @@ bool Interpreter::run(const std::string& filename) {
 }
 
 StatementResult Interpreter::executeStatements(const Json::Value& statements, const LocalEnvironment* env) {
-
-	std::cout << "executeStatements" << std::endl;
 	
 	StatementResult ret;
 	int size = statements.size();
@@ -71,14 +71,13 @@ StatementResult Interpreter::executeDeclareStatement(const Json::Value& statemen
 
 		for (int i = 0; i < size; i++) {
 			Json::Value variable = variables[i];
-			std::string name = statement["variable"].asString();
 			ZephirValue value;
 			if (variable.isMember("expr")) {
 				StatementResult result = this->executeExpressionStatement(variable["expr"], env);
 				value = result.getValue();
 			}
 
-			this->addVariable(name, value, env);
+			this->addVariable(variable["variable"].asString(), value, env);
 		}
 	}
 
@@ -112,7 +111,7 @@ StatementResult Interpreter::executeExpressionStatement(const Json::Value& state
 }
 
 void Interpreter::addVariable(const std::string& name, const ZephirValue& value, const LocalEnvironment* env) {
-	std::cout << "addVariable" << name << std::endl;
+	std::cout << "addVariable name:" << name << ", value: " << value << std::endl;
 	if (env) {
 	} else {
 		this->global_variables[name] = value;

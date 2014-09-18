@@ -12,3 +12,8 @@ sudo apt-get install libboost-system1.55-dev
 sudo apt-get install libboost-filesystem1.55-dev
 sudo apt-get install libboost-regex1.55-dev
 ```
+
+# Tests
+```shel
+valgrind --tool=memcheck --leak-check=full ../bin/zephir-cpp --run hello.zep
+```
