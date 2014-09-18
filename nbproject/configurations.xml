@@ -5,6 +5,8 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="interpreter" displayName="interpreter" projectFiles="true">
+        <itemPath>interpreter/LocalEnvironment.cpp</itemPath>
+        <itemPath>include/interpreter/LocalEnvironment.h</itemPath>
         <itemPath>include/interpreter/StatementResult.h</itemPath>
       </logicalFolder>
       <logicalFolder name="json" displayName="json" projectFiles="true">
@@ -17,6 +19,7 @@
       </logicalFolder>
       <itemPath>Compiler.h</itemPath>
       <itemPath>Interpreter.h</itemPath>
+      <itemPath>include/interpreter/ZephirValue.h</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/parser.h</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.h</itemPath>
     </logicalFolder>
@@ -40,6 +43,7 @@
       <itemPath>Compiler.cpp</itemPath>
       <itemPath>Interpreter.cpp</itemPath>
       <itemPath>interpreter/StatementResult.cpp</itemPath>
+      <itemPath>interpreter/ZephirValue.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/parser.cpp</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.cpp</itemPath>
@@ -148,16 +152,27 @@
       </item>
       <item path="Interpreter.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/interpreter/LocalEnvironment.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="include/interpreter/StatementResult.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
+      <item path="include/interpreter/ZephirValue.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/json/json-forwards.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/json/json.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="interpreter/LocalEnvironment.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="interpreter/StatementResult.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="interpreter/ZephirValue.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="json/jsoncpp.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -249,16 +264,27 @@
       </item>
       <item path="Interpreter.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/interpreter/LocalEnvironment.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="include/interpreter/StatementResult.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
+      <item path="include/interpreter/ZephirValue.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/json/json-forwards.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/json/json.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="interpreter/LocalEnvironment.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="interpreter/StatementResult.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="interpreter/ZephirValue.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="json/jsoncpp.cpp" ex="false" tool="1" flavor2="0">
       </item>

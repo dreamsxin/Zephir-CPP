@@ -11,47 +11,31 @@
 #include <string>
 
 #include "json/json.h"
+#include "interpreter/ZephirValue.h"
 
 class StatementResult {
-
 public:
-	enum ResultType {
+	enum TYPE {
 		NORMAL_RESULT = 1,
 		RETURN_RESULT,
 		BREAK_RESULT,
 		CONTINUE_RESULT
 	};
-	
-	enum ResultValueType {
-		BOOLEAN_VALUE = 1,
-		INT_VALUE,
-		DOUBLE_VALUE,
-		STRING_VALUE,
-		NATIVE_POINTER_VALUE,
-		NULL_VALUE,
-		ARRAY_VALUE,
-		ASSOC_VALUE
-	};
 
 private:
-	StatementResult::ResultType _result_type;
-	StatementResult::ResultValueType _result_value_type;
-	Json::Value _result_value;
+	StatementResult::TYPE type;
+	ZephirValue value;
 
 public:
 	StatementResult();
 	StatementResult(const StatementResult& orig);
 	virtual ~StatementResult();
 
-	void setResultType(StatementResult::ResultType type);
-	void setResultValueType(StatementResult::ResultValueType type);
-	void setResultValue(const Json::Value& value);
+	void setType(StatementResult::TYPE type);
+	void setValue(const ZephirValue& value);
 
-	StatementResult::ResultType getResultType();
-	StatementResult::ResultValueType getResultValueType();
-	Json::Value getResultValue();
-	
-
+	StatementResult::TYPE getType();
+	ZephirValue getValue();
 };
 
 #endif	/* STATEMENTRESULT_H */

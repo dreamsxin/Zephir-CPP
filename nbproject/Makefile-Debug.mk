@@ -41,7 +41,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/842322087/OptionPrinter.o \
 	${OBJECTDIR}/Compiler.o \
 	${OBJECTDIR}/Interpreter.o \
+	${OBJECTDIR}/interpreter/LocalEnvironment.o \
 	${OBJECTDIR}/interpreter/StatementResult.o \
+	${OBJECTDIR}/interpreter/ZephirValue.o \
 	${OBJECTDIR}/json/jsoncpp.o \
 	${OBJECTDIR}/main.o
 
@@ -100,10 +102,20 @@ ${OBJECTDIR}/Interpreter.o: Interpreter.cpp
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Interpreter.o Interpreter.cpp
 
+${OBJECTDIR}/interpreter/LocalEnvironment.o: interpreter/LocalEnvironment.cpp 
+	${MKDIR} -p ${OBJECTDIR}/interpreter
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/interpreter/LocalEnvironment.o interpreter/LocalEnvironment.cpp
+
 ${OBJECTDIR}/interpreter/StatementResult.o: interpreter/StatementResult.cpp 
 	${MKDIR} -p ${OBJECTDIR}/interpreter
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/interpreter/StatementResult.o interpreter/StatementResult.cpp
+
+${OBJECTDIR}/interpreter/ZephirValue.o: interpreter/ZephirValue.cpp 
+	${MKDIR} -p ${OBJECTDIR}/interpreter
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -Iinclude -I/usr/include -I/usr/include/c++/4.8.2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/interpreter/ZephirValue.o interpreter/ZephirValue.cpp
 
 ${OBJECTDIR}/json/jsoncpp.o: json/jsoncpp.cpp 
 	${MKDIR} -p ${OBJECTDIR}/json
