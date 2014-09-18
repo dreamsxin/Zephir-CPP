@@ -540,7 +540,6 @@ Json::Value *xx_parse_program(char *program, unsigned int program_length, char *
 		if (parser_status->status == XX_PARSING_OK) {
 			if (parser_status->ret) {
 				ret = parser_status->ret;
-				std::cout << *(parser_status->ret) << std::endl;
 			}
 		}
 	} else {

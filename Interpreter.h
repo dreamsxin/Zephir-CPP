@@ -26,6 +26,7 @@ public:
 
 private:
 	Compiler compiler;
+	Json::Value statements;
 
 };
 

@@ -21,10 +21,11 @@ Interpreter::~Interpreter() {
 
 bool Interpreter::run(const std::string& filename) {
 
-	Json::Value *value = this->compiler.parse(filename);
+	this->compiler.parse(&this->statements, filename);
 
-	std::cout << *value << std::endl;
-	
-	delete value;
+	std::cout << this->statements << std::endl;
+
 	std::cout << "run" << std::endl;
+	
+	return true;
 }
