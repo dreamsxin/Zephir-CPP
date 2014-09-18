@@ -112,13 +112,13 @@ bool Compiler::generate() {
 	return true;
 }
 
-bool Compiler::parse(Json::Value *const ret, const std::string& filename) {
+Json::Value Compiler::parse( const std::string& filename) {
 
 	path full_path = this->run_path / filename;
 	
 	if (!exists(full_path)) {
 		std::cerr << "Does not exist " << full_path << std::endl;
-		return NULL;
+		return Json::nullValue;
 	}
 
 	std::ifstream ifs;
@@ -128,11 +128,8 @@ bool Compiler::parse(Json::Value *const ret, const std::string& filename) {
 	ost << ifs.rdbuf();
 	
 	std::string program = ost.str();
-	
-	Json::Value *value = xx_parse_program((char *)program.c_str(), program.length(), (char *)filename.c_str());
-	*ret = *value;
-	delete value;
-	return true;
+
+	return xx_parse_program((char *)program.c_str(), program.length(), (char *)filename.c_str());
 }
 
 bool Compiler::recursiveProcess(const path& source, const path& dest) {

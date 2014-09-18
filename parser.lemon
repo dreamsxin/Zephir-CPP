@@ -576,7 +576,7 @@ static Json::Value* xx_ret_list(Json::Value* list_left, Json::Value* right_list)
 
 	if (nullptr != list_left) {
 		array_length = list_left->size();
-		if (list_left->size() > 1) {
+		if (array_length > 0) {
 			for (i = 0; i < array_length; i++) {
 				ret->append((*list_left)[i]);
 			}
@@ -1346,6 +1346,82 @@ xx_top_statement(R) ::= xx_cblock(T) . {
 	R = T;
 }
 
+xx_top_statement(R) ::= xx_let_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_if_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_loop_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_echo_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_return_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_require_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_fetch_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_fcall_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_scall_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_unset_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_throw_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_declare_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_break_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_continue_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_while_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_do_while_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_try_catch_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_switch_statement(T) . {
+	R = T;
+}
+
+xx_top_statement(R) ::= xx_for_statement(T) . {
+	R = T;
+}
+
 xx_namespace_def(R) ::= NAMESPACE IDENTIFIER(I) DOTCOMMA . {
 	R = xx_ret_namespace(I, status->scanner_state);
 }
@@ -2061,8 +2137,6 @@ xx_statement(R) ::= xx_for_statement(S) . {
 xx_statement(R) ::= xx_comment(S) . {
 	R = S;
 }
-
-
 
 xx_statement(R) ::= xx_empty_statement(S) . {
 	R = S;

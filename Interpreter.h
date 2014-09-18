@@ -14,6 +14,7 @@
 
 #include "json/json.h"
 #include "Compiler.h"
+#include "interpreter/StatementResult.h"
 
 using namespace boost::filesystem;
 
@@ -23,6 +24,10 @@ public:
 	virtual ~Interpreter();
 	
 	bool run(const std::string& filename);
+
+private:
+	StatementResult execute_statements(const Json::Value& statements);
+	StatementResult execute_statement(const Json::Value& statement);
 
 private:
 	Compiler compiler;

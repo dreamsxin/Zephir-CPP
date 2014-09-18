@@ -119,4 +119,4 @@
 #define XX_CBLOCK                         119
 
 #include "json/json.h"
-Json::Value *xx_parse_program(char *program, unsigned int program_length, char *file_path);
+Json::Value xx_parse_program(char *program, unsigned int program_length, char *file_path);

@@ -4,6 +4,9 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="interpreter" displayName="interpreter" projectFiles="true">
+        <itemPath>include/interpreter/StatementResult.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="json" displayName="json" projectFiles="true">
         <itemPath>include/json/json-forwards.h</itemPath>
         <itemPath>include/json/json.h</itemPath>
@@ -36,6 +39,7 @@
       </logicalFolder>
       <itemPath>Compiler.cpp</itemPath>
       <itemPath>Interpreter.cpp</itemPath>
+      <itemPath>interpreter/StatementResult.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/parser.cpp</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.cpp</itemPath>
@@ -57,6 +61,7 @@
     <Elem>/home/zhuzx/work/Zephir-CPP/usage</Elem>
     <Elem>/home/zhuzx/work/Zephir-CPP/include/usage</Elem>
     <Elem>include/json</Elem>
+    <Elem>include/interpreter</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -143,9 +148,16 @@
       </item>
       <item path="Interpreter.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/interpreter/StatementResult.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="include/json/json-forwards.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/json/json.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="interpreter/StatementResult.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="json/jsoncpp.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -237,9 +249,16 @@
       </item>
       <item path="Interpreter.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/interpreter/StatementResult.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="include/json/json-forwards.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/json/json.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="interpreter/StatementResult.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="json/jsoncpp.cpp" ex="false" tool="1" flavor2="0">
       </item>

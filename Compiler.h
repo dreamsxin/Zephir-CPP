@@ -24,7 +24,7 @@ public:
 	
 	bool init(const std::string& ns);
 	bool generate();
-	bool parse(Json::Value * const ret, const std::string& filename);
+	Json::Value parse(const std::string& filename);
 
 private:
 	bool recursiveProcess(const path& source, const path& dest);

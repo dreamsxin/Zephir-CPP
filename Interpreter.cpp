@@ -21,11 +21,35 @@ Interpreter::~Interpreter() {
 
 bool Interpreter::run(const std::string& filename) {
 
-	this->compiler.parse(&this->statements, filename);
+	this->statements = this->compiler.parse(filename);
 
 	std::cout << this->statements << std::endl;
 
+
+
 	std::cout << "run" << std::endl;
-	
+
 	return true;
+}
+
+StatementResult Interpreter::execute_statements(const Json::Value& statements) {
+
+	StatementResult ret;
+	int size = statements.size();
+
+	for (int i = 0; i < size; i++) {
+		ret = this->execute_statement(statements[i]);
+	}
+
+	return ret;
+}
+
+StatementResult Interpreter::execute_statement(const Json::Value& statement) {
+
+	StatementResult ret;
+	if (statement.isMember("type")) {
+
+	}
+
+	return ret;
 }
