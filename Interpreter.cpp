@@ -35,10 +35,7 @@ bool Interpreter::run(const std::string& filename) {
 		return true;
 	} catch (RuntimeError e) {
 		std::cerr << e.what() << std::endl;
-	} catch (std::exception e) {
-		std::cerr << e.what() << std::endl;
 	}
-
 	return false;
 }
 
@@ -166,14 +163,21 @@ StatementResult Interpreter::executeExpressionStatement(const Json::Value& state
 			ZephirValue *value = this->getVariable(name, env);
 			if (nullptr == value) {
 				throw RuntimeError(RuntimeError::VARIABLE_NOT_FOUND, statement);
+			} else {
+				ret.setValue(*value);
 			}
-			ret.setValue(*value);
 		} else if (type.compare("add") == 0) {
 			StatementResult left = this->executeExpressionStatement(statement["left"], env);
 			StatementResult right = this->executeExpressionStatement(statement["right"], env);
 			
 			ZephirValue value = left.getValue() + right.getValue();
 			
+			ret.setValue(value);
+		} else if (type.compare("mcall") == 0) {
+			StatementResult result = this->executeExpressionStatement(statement["variable"], env);
+			
+			ZephirValue value = this->callMethod(result.getValue(), statement["name"].asString(), env);
+
 			ret.setValue(value);
 		}
 	}
@@ -204,4 +208,27 @@ ZephirValue* Interpreter::getVariable(const std::string& name, LocalEnvironment*
 	}
 
 	return value;
+}
+
+ZephirValue Interpreter::callMethod(const ZephirValue& value, const std::string& method, LocalEnvironment* const env) {
+
+	ZephirValue ret;
+
+	if (value.isString()) {
+		ret = this->callStringMethod(value, method, env);
+	}
+
+	return ret;
+}
+
+ZephirValue Interpreter::callStringMethod(const ZephirValue& value, const std::string& method, LocalEnvironment* const env) {
+
+	ZephirValue ret;
+
+	if (method.compare("length") == 0) {
+			ret.setType(ZephirValue::INT_VALUE);
+			ret.setValue((int)value.asString().length());
+	}
+
+	return ret;
 }

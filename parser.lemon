@@ -1172,7 +1172,7 @@ static Json::Value* xx_ret_mcall(int type, Json::Value* O, xx_parser_token *M, J
 	Json::Value* ret = new Json::Value();
 
 	(*ret)["type"] = "mcall";
-	(*ret)["variable"] = O;
+	(*ret)["variable"] = *O;
 	delete O;
 	(*ret)["name"] = M->token;
 	delete M;
@@ -2522,7 +2522,7 @@ xx_echo_expressions(R) ::= xx_echo_expression(A) . {
 }
 
 xx_echo_expression(R) ::= xx_common_expr(E) . {
-	R = E;;
+	R = E;
 }
 
 /* mcall statement */

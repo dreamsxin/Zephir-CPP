@@ -14,7 +14,7 @@ ZephirValue::ZephirValue() {
 	this->value = NULL;
 }
 
-ZephirValue::ZephirValue(const ZephirValue::TYPE type, const boost::any& value) {
+ZephirValue::ZephirValue(const ZephirValue::TYPE& type, const boost::any& value) {
 	this->type = type;
 	this->value = value;
 }
@@ -41,6 +41,14 @@ ZephirValue::TYPE ZephirValue::getType() {
 
 boost::any ZephirValue::getValue() {
 	return this->value;
+}
+
+bool ZephirValue::isNULL() const {
+	return type == ZephirValue::TYPE::NULL_VALUE;
+}
+
+bool ZephirValue::isString() const {
+	return type == ZephirValue::TYPE::STRING_VALUE;
 }
 
 std::string ZephirValue::asString() const {
@@ -154,6 +162,15 @@ ZephirValue operator+(const ZephirValue &left, const ZephirValue &right) {
 
 std::ostream& operator<<(std::ostream& out, const ZephirValue& value) {
 	switch (value.type) {
+		case ZephirValue::TYPE::BOOLEAN_VALUE:
+			out << boost::any_cast<bool>(value.value) << std::endl;
+			break;
+		case ZephirValue::TYPE::INT_VALUE:
+			out << boost::any_cast<int>(value.value) << std::endl;
+			break;
+		case ZephirValue::TYPE::DOUBLE_VALUE:
+			out << boost::any_cast<double>(value.value) << std::endl;
+			break;
 		case ZephirValue::TYPE::STRING_VALUE:
 			out << boost::any_cast<std::string>(value.value) << std::endl;
 			break;

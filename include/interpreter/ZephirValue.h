@@ -28,7 +28,7 @@ public:
 
 public:
 	ZephirValue();
-	ZephirValue(const ZephirValue::TYPE type, const boost::any& value);
+	ZephirValue(const ZephirValue::TYPE& type, const boost::any& value);
 	ZephirValue(const ZephirValue& orig);
 	virtual ~ZephirValue();
 
@@ -37,6 +37,9 @@ public:
 
 	ZephirValue::TYPE getType();
 	boost::any getValue();
+
+	bool isNULL() const;
+	bool isString() const;
 
 	std::string asString() const;
 	int asInt() const;
