@@ -34,9 +34,10 @@ private:
 	StatementResult executeStatements(const Json::Value& statements, LocalEnvironment* const env);
 	StatementResult executeStatement(const Json::Value& statement, LocalEnvironment* const env);
 	StatementResult executeDeclareStatement(const Json::Value& statement, LocalEnvironment* const env);
-	StatementResult executeLetStatement(const Json::Value& statement, LocalEnvironment* const env);	
-	StatementResult executeAssignmentStatement(const Json::Value& statement, LocalEnvironment* const env);	
+	StatementResult executeLetStatement(const Json::Value& statement, LocalEnvironment* const env);
+	StatementResult executeAssignmentStatement(const Json::Value& statement, LocalEnvironment* const env);
 	StatementResult executeEchoStatement(const Json::Value& statement, LocalEnvironment* const env);
+	StatementResult executeIfStatement(const Json::Value& statement, LocalEnvironment* const env);	
 	StatementResult executeExpressionStatement(const Json::Value& statement, LocalEnvironment* const env);
 
 	void addVariable(const std::string& name, const ZephirValue& value, LocalEnvironment* const env);

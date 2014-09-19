@@ -71,6 +71,8 @@ public:
 	}
 	
 	friend ZephirValue operator+(const ZephirValue &left, const ZephirValue &right);
+	friend bool operator<(const ZephirValue &left, const ZephirValue & right);
+	friend bool operator>(const ZephirValue &left, const ZephirValue & right);
 
 	friend std::ostream& operator<<(std::ostream& out, const ZephirValue& value);
 

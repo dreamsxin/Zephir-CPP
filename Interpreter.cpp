@@ -62,7 +62,9 @@ StatementResult Interpreter::executeStatement(const Json::Value& statement, Loca
 			ret = this->executeLetStatement(statement, env);
 		} else if (type.compare("echo") == 0) {
 			ret = this->executeEchoStatement(statement, env);
-		}		
+		} else if (type.compare("if") == 0) {
+			ret = this->executeIfStatement(statement, env);
+		}	
 	}
 
 	return ret;
@@ -148,6 +150,17 @@ StatementResult Interpreter::executeEchoStatement(const Json::Value& statement, 
 	return ret;
 }
 
+StatementResult Interpreter::executeIfStatement(const Json::Value& statement, LocalEnvironment * const env) {
+
+	StatementResult ret;
+	if (statement.isMember("expr")) {
+		StatementResult result = this->executeExpressionStatement(statement["expr"], env);
+		ZephirValue value = result.getValue();
+	}
+
+	return ret;
+}
+
 StatementResult Interpreter::executeExpressionStatement(const Json::Value& statement, LocalEnvironment * const env) {
 
 	StatementResult ret;
@@ -166,6 +179,14 @@ StatementResult Interpreter::executeExpressionStatement(const Json::Value& state
 			} else {
 				ret.setValue(*value);
 			}
+		} else if (type.compare("greater") == 0) {
+			StatementResult left = this->executeExpressionStatement(statement["left"], env);
+			StatementResult right = this->executeExpressionStatement(statement["right"], env);
+			
+			ZephirValue value;
+			value.setType(ZephirValue::BOOLEAN_VALUE);
+			value.setValue(left.getValue() > right.getValue());
+			ret.setValue(value);
 		} else if (type.compare("add") == 0) {
 			StatementResult left = this->executeExpressionStatement(statement["left"], env);
 			StatementResult right = this->executeExpressionStatement(statement["right"], env);

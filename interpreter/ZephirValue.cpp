@@ -160,6 +160,36 @@ ZephirValue operator+(const ZephirValue &left, const ZephirValue &right) {
 	return value;
 }
 
+bool operator<(const ZephirValue &left, const ZephirValue & right) {
+	switch (right.type) {
+		case ZephirValue::TYPE::BOOLEAN_VALUE:
+			return left.asBool() < right.asBool();
+		case ZephirValue::TYPE::INT_VALUE:
+			return left.asInt() < right.asInt();
+		case ZephirValue::TYPE::DOUBLE_VALUE:
+			return left.asDouble() < right.asDouble();
+		case ZephirValue::TYPE::STRING_VALUE:
+			return left.asString() < right.asString();
+		default:
+			return false;
+	}
+}
+
+bool operator>(const ZephirValue &left, const ZephirValue & right) {
+	switch (right.type) {
+		case ZephirValue::TYPE::BOOLEAN_VALUE:
+			return left.asBool() > right.asBool();
+		case ZephirValue::TYPE::INT_VALUE:
+			return left.asInt() > right.asInt();
+		case ZephirValue::TYPE::DOUBLE_VALUE:
+			return left.asDouble() > right.asDouble();
+		case ZephirValue::TYPE::STRING_VALUE:
+			return left.asString() > right.asString();
+		default:
+			return false;
+	}
+}
+
 std::ostream& operator<<(std::ostream& out, const ZephirValue& value) {
 	switch (value.type) {
 		case ZephirValue::TYPE::BOOLEAN_VALUE:
