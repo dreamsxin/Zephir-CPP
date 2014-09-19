@@ -15,6 +15,7 @@
                 <sourceRootElem>/home/zhuzx/work/Zephir-CPP/include/usage</sourceRootElem>
                 <sourceRootElem>include/json</sourceRootElem>
                 <sourceRootElem>include/interpreter</sourceRootElem>
+                <sourceRootElem>interpreter</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

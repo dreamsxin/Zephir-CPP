@@ -41,6 +41,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/842322087/OptionPrinter.o \
 	${OBJECTDIR}/Compiler.o \
 	${OBJECTDIR}/Interpreter.o \
+	${OBJECTDIR}/RuntimeError.o \
 	${OBJECTDIR}/interpreter/LocalEnvironment.o \
 	${OBJECTDIR}/interpreter/StatementResult.o \
 	${OBJECTDIR}/interpreter/ZephirValue.o \
@@ -100,6 +101,11 @@ ${OBJECTDIR}/Interpreter.o: Interpreter.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Interpreter.o Interpreter.cpp
+
+${OBJECTDIR}/RuntimeError.o: RuntimeError.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/RuntimeError.o RuntimeError.cpp
 
 ${OBJECTDIR}/interpreter/LocalEnvironment.o: interpreter/LocalEnvironment.cpp 
 	${MKDIR} -p ${OBJECTDIR}/interpreter

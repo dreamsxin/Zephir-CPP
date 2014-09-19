@@ -27,7 +27,7 @@ const char* RuntimeError::what() const throw () {
 
 void RuntimeError::generate() {
 	std::ostringstream oss;
-	oss << "RuntimeError: " << this->messages[this->type];
+	oss << "[RuntimeError] " << this->messages[this->type];
 	if (this->info.isMember("file")) {
 		oss << " in " << this->info["file"].asString() << " on line " << this->info["line"].asString();
 	}

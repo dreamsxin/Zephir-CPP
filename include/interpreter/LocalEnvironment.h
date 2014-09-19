@@ -11,7 +11,9 @@
 #include <string>
 
 #include <boost/any.hpp>
-#include <boost/unordered_map.hpp> 
+#include <boost/unordered_map.hpp>
+
+#include "interpreter/ZephirValue.h"
 
 class LocalEnvironment {
 public:
@@ -19,12 +21,11 @@ public:
 	LocalEnvironment(const LocalEnvironment& orig);
 	virtual ~LocalEnvironment();
 
-	void addVariable(const std::string& name, const boost::any& value);
-	boost::any *getVariable(const std::string& name);
+	void addVariable(const std::string& name, const ZephirValue& value);
+	ZephirValue *getVariable(const std::string& name);
 
-private:	
-	boost::unordered_map<std::string, boost::any> variables;
-
+private:
+	boost::unordered_map<std::string, ZephirValue> variables;
 };
 
 #endif	/* LOCALENVIRONMENT_H */

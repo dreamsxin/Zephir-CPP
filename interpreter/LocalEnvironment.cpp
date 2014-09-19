@@ -16,11 +16,11 @@ LocalEnvironment::LocalEnvironment(const LocalEnvironment& orig) {
 LocalEnvironment::~LocalEnvironment() {
 }
 
-void LocalEnvironment::addVariable(const std::string& name, const boost::any& value) {
+void LocalEnvironment::addVariable(const std::string& name, const ZephirValue& value) {
 	this->variables[name] = value; 
 }
 
-boost::any *LocalEnvironment::getVariable(const std::string& name) {
+ZephirValue* LocalEnvironment::getVariable(const std::string& name) {
 	if (this->variables.find(name) != this->variables.end()) {
 		return &this->variables[name];
 	} else {

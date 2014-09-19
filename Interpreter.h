@@ -31,18 +31,22 @@ public:
 	bool run(const std::string& filename);
 
 private:
-	StatementResult executeStatements(const Json::Value& statements, const LocalEnvironment* env);
-	StatementResult executeStatement(const Json::Value& statement, const LocalEnvironment* env);
-	StatementResult executeDeclareStatement(const Json::Value& statement, const LocalEnvironment* env);
-	StatementResult executeEchoStatement(const Json::Value& statement, const LocalEnvironment* env);
-	StatementResult executeExpressionStatement(const Json::Value& statement, const LocalEnvironment* env);
+	StatementResult executeStatements(const Json::Value& statements, LocalEnvironment* const env);
+	StatementResult executeStatement(const Json::Value& statement, LocalEnvironment* const env);
+	StatementResult executeDeclareStatement(const Json::Value& statement, LocalEnvironment* const env);
+	StatementResult executeLetStatement(const Json::Value& statement, LocalEnvironment* const env);	
+	StatementResult executeAssignmentStatement(const Json::Value& statement, LocalEnvironment* const env);	
+	StatementResult executeEchoStatement(const Json::Value& statement, LocalEnvironment* const env);
+	StatementResult executeExpressionStatement(const Json::Value& statement, LocalEnvironment* const env);
 	
-	void addVariable(const std::string& name, const ZephirValue& value, const LocalEnvironment* env);
+	
+	void addVariable(const std::string& name, const ZephirValue& value, LocalEnvironment* const env);
+	ZephirValue *getVariable(const std::string& name, LocalEnvironment* const env);
 
 private:
 	Compiler compiler;
 	Json::Value statements;
-	boost::unordered_map<std::string, boost::any> global_variables;
+	boost::unordered_map<std::string, ZephirValue> global_variables;
 	std::stack<StatementResult> eval_stack;
 
 };

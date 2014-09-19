@@ -5,9 +5,9 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="interpreter" displayName="interpreter" projectFiles="true">
-        <itemPath>interpreter/LocalEnvironment.cpp</itemPath>
         <itemPath>include/interpreter/LocalEnvironment.h</itemPath>
         <itemPath>include/interpreter/StatementResult.h</itemPath>
+        <itemPath>include/interpreter/ZephirValue.h</itemPath>
       </logicalFolder>
       <logicalFolder name="json" displayName="json" projectFiles="true">
         <itemPath>include/json/json-forwards.h</itemPath>
@@ -19,7 +19,7 @@
       </logicalFolder>
       <itemPath>Compiler.h</itemPath>
       <itemPath>Interpreter.h</itemPath>
-      <itemPath>include/interpreter/ZephirValue.h</itemPath>
+      <itemPath>RuntimeError.h</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/parser.h</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.h</itemPath>
     </logicalFolder>
@@ -33,6 +33,11 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="interpreter" displayName="interpreter" projectFiles="true">
+        <itemPath>interpreter/LocalEnvironment.cpp</itemPath>
+        <itemPath>interpreter/StatementResult.cpp</itemPath>
+        <itemPath>interpreter/ZephirValue.cpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="json" displayName="json" projectFiles="true">
         <itemPath>json/jsoncpp.cpp</itemPath>
       </logicalFolder>
@@ -42,8 +47,7 @@
       </logicalFolder>
       <itemPath>Compiler.cpp</itemPath>
       <itemPath>Interpreter.cpp</itemPath>
-      <itemPath>interpreter/StatementResult.cpp</itemPath>
-      <itemPath>interpreter/ZephirValue.cpp</itemPath>
+      <itemPath>RuntimeError.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/parser.cpp</itemPath>
       <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.cpp</itemPath>
@@ -66,6 +70,7 @@
     <Elem>/home/zhuzx/work/Zephir-CPP/include/usage</Elem>
     <Elem>include/json</Elem>
     <Elem>include/interpreter</Elem>
+    <Elem>interpreter</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -151,6 +156,10 @@
       <item path="Interpreter.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Interpreter.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="RuntimeError.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RuntimeError.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/interpreter/LocalEnvironment.h"
             ex="false"
@@ -263,6 +272,10 @@
       <item path="Interpreter.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Interpreter.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="RuntimeError.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="RuntimeError.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/interpreter/LocalEnvironment.h"
             ex="false"
