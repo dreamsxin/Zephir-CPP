@@ -16,7 +16,7 @@ if size > 0 {
 	while size > 0 {
 		let size--;
 		if size % 2 == 0 {
-			echo "size/2 == 0";
+			echo "size%2 == 0";
 			continue;
 		}
 		echo "size is " + size;
