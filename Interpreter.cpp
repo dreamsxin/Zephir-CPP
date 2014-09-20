@@ -156,6 +156,10 @@ StatementResult Interpreter::executeIfStatement(const Json::Value& statement, Lo
 	if (statement.isMember("expr")) {
 		StatementResult result = this->executeExpressionStatement(statement["expr"], env);
 		ZephirValue value = result.getValue();
+				
+		if (value.asBool()) {
+			StatementResult result = this->executeStatements(statement["statements"], env);			
+		}
 	}
 
 	return ret;
@@ -169,6 +173,10 @@ StatementResult Interpreter::executeExpressionStatement(const Json::Value& state
 
 		if (type.compare("string") == 0) {
 			ZephirValue value(ZephirValue::STRING_VALUE, statement["value"].asString());
+			ret.setType(StatementResult::NORMAL_RESULT);
+			ret.setValue(value);
+		} else if (type.compare("int") == 0) {
+			ZephirValue value(ZephirValue::INT_VALUE, std::stoi(statement["value"].asString()));
 			ret.setType(StatementResult::NORMAL_RESULT);
 			ret.setValue(value);
 		} else if (type.compare("variable") == 0) {
