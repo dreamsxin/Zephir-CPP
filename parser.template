@@ -102,7 +102,7 @@ Json::Value xx_parse_program(char *program, unsigned int program_length, char *f
 	parser_status->scanner_state = state;
 	parser_status->ret = NULL;
 	parser_status->token = &token;
-	parser_status->syntax_error = NULL;
+	parser_status->syntax_error.clear();
 	parser_status->number_brackets = 0;
 
 	/**
@@ -493,7 +493,7 @@ Json::Value xx_parse_program(char *program, unsigned int program_length, char *f
 
 			default:
 				parser_status->status = XX_PARSING_FAILED;
-				fprintf(stderr, "Scanner: unknown opcode %d\n", token.opcode);
+				std::cerr << "Scanner: unknown opcode " << token.opcode << std::endl;
 				break;
 		}
 
@@ -510,14 +510,11 @@ Json::Value xx_parse_program(char *program, unsigned int program_length, char *f
 			case XX_SCANNER_RETCODE_ERR:
 			case XX_SCANNER_RETCODE_IMPOSSIBLE:
 				{
-					char *x = (char *)malloc(sizeof(char) * 1024);
 					if (state->start) {
-						sprintf(x, "Scanner error: %d %s", scanner_status, state->start);
+						std::cerr << "Scanner error: " << scanner_status << " " << state->start << std::endl;
 					} else {
-						sprintf(x, "Scanner error: %d", scanner_status);
+						std::cerr << "Scanner error: " << scanner_status << std::endl;
 					}
-					fprintf(stderr, "%s\n", x);
-					free(x);
 					status = FAILURE;
 				}
 				break;
@@ -529,8 +526,13 @@ Json::Value xx_parse_program(char *program, unsigned int program_length, char *f
 	state->active_token = 0;
 	state->start = NULL;
 
-	if (parser_status->status != XX_PARSING_OK) {
+	if (parser_status->status == XX_PARSING_FAILED) {
 		status = FAILURE;
+		if (!parser_status->syntax_error.empty()) {
+			std::cerr << "Error: " << parser_status->syntax_error << std::endl;
+		} else {
+			std::cerr << "Error" <<                                                                                                                                                             std::endl;
+		}
 	}
 
 	xx_Free(xx_parser, xx_wrapper_free);
@@ -539,9 +541,12 @@ Json::Value xx_parse_program(char *program, unsigned int program_length, char *f
 		if (parser_status->status == XX_PARSING_OK) {
 			if (parser_status->ret) {
 				ret = *(parser_status->ret);
-				delete parser_status->ret;
 			}
 		}
+	}
+
+	if (parser_status->ret) {
+		delete parser_status->ret;
 	}
 
 	delete parser_status;

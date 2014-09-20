@@ -53,10 +53,10 @@
 
 %include {
 
-#include <iostream>
 #include <cstddef>
 #include <string>
 #include <iostream>
+#include <sstream>
 
 #include "json/json.h"
 
@@ -1268,20 +1268,63 @@ static Json::Value* xx_ret_cblock(xx_parser_token *T, xx_scanner_state *state)
 }
 
 %syntax_error {
-
-	//fprintf(stderr, "error!\n");
-
 	Json::Value* syntax_error = new Json::Value();
-
 	(*syntax_error)["type"] = "error";
-
-	//status->syntax_error_len = 48 + Z_STRLEN_P(status->scanner_state->active_file);
-	//status->syntax_error = emalloc(sizeof(char) * status->syntax_error_len);
 
 	if (status->scanner_state->start_length) {
 		(*syntax_error)["message"] = "Syntax error";
+
+		const xx_token_names *tokens = xx_tokens;
+		std::string token_name;
+
+		if (status->scanner_state->active_token) {
+			do {
+				if (tokens->code == status->scanner_state->active_token) {
+					token_name = tokens->name;
+					break;
+				}
+				++tokens;
+			} while (tokens[0].code != 0);
+		}
+
+		if (token_name.empty()) {
+			token_name = "UNKNOWN";
+		}
+
+		std::ostringstream oss;
+		oss << "Syntax error, ";
+
+		if (status->scanner_state->start_length > 0) {
+			oss << "unexpected token " << token_name;
+			if (!status->token->value.empty()) {
+				oss << "(" << status->token->value << "), near to '" << status->scanner_state->start;
+				oss << "' in " << status->scanner_state->active_file << " on line " << status->scanner_state->active_line;
+			} else {
+				oss << ", near to '" << status->scanner_state->start << "' in " << status->scanner_state->active_file;
+				oss << " on line " << status->scanner_state->active_line;
+			}
+		} else {
+			if (status->scanner_state->active_token != XX_T_IGNORE) {
+				if (!status->token->value.empty()) {
+					oss << "unexpected token %s" << token_name << "(" << status->token->value << "), ";
+					oss << "at the end of docblock in " << status->scanner_state->active_file << " on line " << status->scanner_state->active_line;
+				} else {
+					oss << "unexpected token %s" << token_name << "), ";
+					oss << "at the end of docblock in " << status->scanner_state->active_file << " on line " << status->scanner_state->active_line;
+				}
+			} else {
+				oss << "unexpected EOF, at the end of docblock in " << status->scanner_state->active_file << " on line " << status->scanner_state->active_line;
+			}
+		}
+
+		status->syntax_error = oss.str();
+		status->syntax_error_len = status->syntax_error.length();
 	} else {
 		(*syntax_error)["message"] = "Unexpected EOF";
+
+		status->syntax_error = "Syntax error, unexpected EOF in ";
+		status->syntax_error.append(status->scanner_state->active_file);
+		status->syntax_error_len = status->syntax_error.length();
 	}
 
 	(*syntax_error)["file"] = status->scanner_state->active_file;
@@ -1289,10 +1332,7 @@ static Json::Value* xx_ret_cblock(xx_parser_token *T, xx_scanner_state *state)
 	(*syntax_error)["char"] = status->scanner_state->active_char;
 
 	status->status = XX_PARSING_FAILED;
-
 	status->ret = syntax_error;
-
-	//status->scanner_state->active_file
 }
 
 %token_destructor {

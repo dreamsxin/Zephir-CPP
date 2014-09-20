@@ -28,7 +28,7 @@ typedef struct _xx_parser_status {
 	Json::Value *ret;
 	xx_scanner_state *scanner_state;
 	xx_scanner_token *token;
-	char *syntax_error;
+	std::string syntax_error;
 	unsigned int syntax_error_len;
 	unsigned int number_brackets;
 } xx_parser_status;
