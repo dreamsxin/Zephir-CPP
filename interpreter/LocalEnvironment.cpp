@@ -20,11 +20,14 @@ void LocalEnvironment::addVariable(const std::string& name, const ZephirValue& v
 	this->variables[name] = value; 
 }
 
-ZephirValue* LocalEnvironment::getVariable(const std::string& name) {
+ZephirValue LocalEnvironment::getVariable(const std::string& name) {
+	ZephirValue value;
 	if (this->variables.find(name) != this->variables.end()) {
-		return &this->variables[name];
+		value = this->variables[name];
 	} else {
-		return nullptr;
+		value.setType(ZephirValue::UNDEFINED_VALUE);
 	}
+
+	return value;
 }
 

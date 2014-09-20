@@ -41,13 +41,22 @@ bool Interpreter::run(const std::string& filename) {
 
 StatementResult Interpreter::executeStatements(const Json::Value& statements, LocalEnvironment * const env) {
 
-	StatementResult ret;
+
 	int size = statements.size();
 
 	for (int i = 0; i < size; i++) {
-		ret = this->executeStatement(statements[i], env);
+		StatementResult result = this->executeStatement(statements[i], env);
+		switch (result.getType()) {
+			case StatementResult::BREAK_RESULT:
+			case StatementResult::RETURN_RESULT:
+			case StatementResult::CONTINUE_RESULT:
+				return result;
+			default:
+				break;
+		}
 	}
-
+	StatementResult ret;
+	ret.setType(StatementResult::NORMAL_RESULT);
 	return ret;
 }
 
@@ -66,6 +75,12 @@ StatementResult Interpreter::executeStatement(const Json::Value& statement, Loca
 			ret = this->executeIfStatement(statement, env);
 		} else if (type.compare("while") == 0) {
 			ret = this->executeWhileStatement(statement, env);
+		} else if (type.compare("return") == 0) {
+			ret = this->executeExpressionStatement(statement["expr"], env);
+		} else if (type.compare("break") == 0) {
+			ret.setType(StatementResult::BREAK_RESULT);
+		} else if (type.compare("continue") == 0) {
+			ret.setType(StatementResult::CONTINUE_RESULT);
 		}
 	}
 
@@ -106,7 +121,7 @@ StatementResult Interpreter::executeLetStatement(const Json::Value& statement, L
 
 		int size = assignments.size();
 
-		for (int i = 0; i < size; i++) {			
+		for (int i = 0; i < size; i++) {
 			StatementResult result = this->executeAssignmentStatement(assignments[i], env);
 		}
 	}
@@ -121,7 +136,13 @@ StatementResult Interpreter::executeAssignmentStatement(const Json::Value& state
 	std::string assign_type = statement["assign-type"].asString();
 	std::string op = statement["operator"].asString();
 
-	if (assign_type.compare("variable") == 0) {
+	if (assign_type.compare("decr") == 0) {
+		std::string name = statement["variable"].asString();
+		ZephirValue value = this->getVariable(name, env);
+		value--;
+		this->addVariable(name, value, env);
+		ret.setValue(value);
+	} else if (assign_type.compare("variable") == 0) {
 		std::string name = statement["variable"].asString();
 		ZephirValue value;
 		if (statement.isMember("expr")) {
@@ -158,9 +179,9 @@ StatementResult Interpreter::executeIfStatement(const Json::Value& statement, Lo
 	if (statement.isMember("expr")) {
 		StatementResult result = this->executeExpressionStatement(statement["expr"], env);
 		ZephirValue value = result.getValue();
-				
+
 		if (value.asBool()) {
-			StatementResult result = this->executeStatements(statement["statements"], env);			
+			StatementResult result = this->executeStatements(statement["statements"], env);
 		}
 	}
 
@@ -171,13 +192,22 @@ StatementResult Interpreter::executeWhileStatement(const Json::Value& statement,
 
 	StatementResult ret;
 	if (statement.isMember("expr")) {
+		while (1) {
+			StatementResult result = this->executeExpressionStatement(statement["expr"], env);
+			ZephirValue value = result.getValue();
+			if (value.asBool()) {
+				StatementResult result = this->executeStatements(statement["statements"], env);
 
-		StatementResult result = this->executeExpressionStatement(statement["expr"], env);
-		ZephirValue value = result.getValue();
-				
-		if (value.asBool()) {
-			StatementResult result = this->executeStatements(statement["statements"], env);
-			this->executeWhileStatement(statement, env);
+				switch (result.getType()) {
+					case StatementResult::BREAK_RESULT:
+					case StatementResult::RETURN_RESULT:
+						return result;
+					default:
+						continue;
+				}
+			} else {
+				break;
+			}
 		}
 	}
 
@@ -200,16 +230,16 @@ StatementResult Interpreter::executeExpressionStatement(const Json::Value& state
 			ret.setValue(value);
 		} else if (type.compare("variable") == 0) {
 			std::string name = statement["value"].asString();
-			ZephirValue *value = this->getVariable(name, env);
-			if (nullptr == value) {
+			ZephirValue value = this->getVariable(name, env);
+			if (value.getType() == ZephirValue::UNDEFINED_VALUE) {
 				throw RuntimeError(RuntimeError::VARIABLE_NOT_FOUND, statement);
 			} else {
-				ret.setValue(*value);
+				ret.setValue(value);
 			}
 		} else if (type.compare("greater") == 0) {
 			StatementResult left = this->executeExpressionStatement(statement["left"], env);
 			StatementResult right = this->executeExpressionStatement(statement["right"], env);
-			
+
 			ZephirValue value;
 			value.setType(ZephirValue::BOOLEAN_VALUE);
 			value.setValue(left.getValue() > right.getValue());
@@ -217,15 +247,28 @@ StatementResult Interpreter::executeExpressionStatement(const Json::Value& state
 		} else if (type.compare("add") == 0) {
 			StatementResult left = this->executeExpressionStatement(statement["left"], env);
 			StatementResult right = this->executeExpressionStatement(statement["right"], env);
-			
+
 			ZephirValue value = left.getValue() + right.getValue();
-			
+
+			ret.setValue(value);
+		} else if (type.compare("mod") == 0) {
+			StatementResult left = this->executeExpressionStatement(statement["left"], env);
+			StatementResult right = this->executeExpressionStatement(statement["right"], env);
+
+			ZephirValue value = (left.getValue() % right.getValue());
+
 			ret.setValue(value);
 		} else if (type.compare("mcall") == 0) {
 			StatementResult result = this->executeExpressionStatement(statement["variable"], env);
-			
+
 			ZephirValue value = this->callMethod(result.getValue(), statement["name"].asString(), env);
 
+			ret.setValue(value);
+		} else if (type.compare("equals") == 0) {
+			StatementResult left = this->executeExpressionStatement(statement["left"], env);
+			StatementResult right = this->executeExpressionStatement(statement["right"], env);
+
+			ZephirValue value(ZephirValue::BOOLEAN_VALUE, left.getValue() == right.getValue());
 			ret.setValue(value);
 		}
 	}
@@ -241,24 +284,24 @@ void Interpreter::addVariable(const std::string& name, const ZephirValue& value,
 	}
 }
 
-ZephirValue* Interpreter::getVariable(const std::string& name, LocalEnvironment* env) {
-	ZephirValue *value = nullptr;
+ZephirValue Interpreter::getVariable(const std::string& name, LocalEnvironment* env) {
+	ZephirValue value;
 	if (env) {
 		value = env->getVariable(name);
 	}
 
-	if (nullptr == value) {
+	if (value.getType() == ZephirValue::UNDEFINED_VALUE) {
 		if (this->global_variables.find(name) != this->global_variables.end()) {
-			value = &this->global_variables[name];
+			value = this->global_variables[name];
 		} else {
-			value = nullptr;
+			value.setType(ZephirValue::UNDEFINED_VALUE);
 		}
 	}
 
 	return value;
 }
 
-ZephirValue Interpreter::callMethod(const ZephirValue& value, const std::string& method, LocalEnvironment* const env) {
+ZephirValue Interpreter::callMethod(const ZephirValue& value, const std::string& method, LocalEnvironment * const env) {
 
 	ZephirValue ret;
 
@@ -269,13 +312,13 @@ ZephirValue Interpreter::callMethod(const ZephirValue& value, const std::string&
 	return ret;
 }
 
-ZephirValue Interpreter::callStringMethod(const ZephirValue& value, const std::string& method, LocalEnvironment* const env) {
+ZephirValue Interpreter::callStringMethod(const ZephirValue& value, const std::string& method, LocalEnvironment * const env) {
 
 	ZephirValue ret;
 
 	if (method.compare("length") == 0) {
-			ret.setType(ZephirValue::INT_VALUE);
-			ret.setValue((int)value.asString().length());
+		ret.setType(ZephirValue::INT_VALUE);
+		ret.setValue((int) value.asString().length());
 	}
 
 	return ret;

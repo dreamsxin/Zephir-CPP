@@ -42,7 +42,7 @@ private:
 	StatementResult executeExpressionStatement(const Json::Value& statement, LocalEnvironment* const env);
 
 	void addVariable(const std::string& name, const ZephirValue& value, LocalEnvironment* const env);
-	ZephirValue *getVariable(const std::string& name, LocalEnvironment* const env);
+	ZephirValue getVariable(const std::string& name, LocalEnvironment* const env);
 	ZephirValue callMethod(const ZephirValue& value, const std::string& method, LocalEnvironment* const env);
 	ZephirValue callStringMethod(const ZephirValue& value, const std::string& method, LocalEnvironment* const env);
 

@@ -22,7 +22,7 @@ public:
 	virtual ~LocalEnvironment();
 
 	void addVariable(const std::string& name, const ZephirValue& value);
-	ZephirValue *getVariable(const std::string& name);
+	ZephirValue getVariable(const std::string& name);
 
 private:
 	boost::unordered_map<std::string, ZephirValue> variables;

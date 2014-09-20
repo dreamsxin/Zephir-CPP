@@ -6,11 +6,12 @@
  */
 
 #include <iostream>
+#include <cmath>
 
 #include "interpreter/ZephirValue.h"
 
 ZephirValue::ZephirValue() {
-	this->type = ZephirValue::TYPE::NULL_VALUE;
+	this->type = ZephirValue::UNDEFINED_VALUE;
 	this->value = NULL;
 }
 
@@ -80,7 +81,7 @@ int ZephirValue::asInt() const {
 		case ZephirValue::TYPE::INT_VALUE:
 			return boost::any_cast<int>(value);
 		case ZephirValue::TYPE::DOUBLE_VALUE:
-			return static_cast<int>(boost::any_cast<double>(value));
+			return static_cast<int> (boost::any_cast<double>(value));
 		case ZephirValue::TYPE::STRING_VALUE:
 			return std::stoi(boost::any_cast<std::string>(value));
 		case ZephirValue::TYPE::NATIVE_POINTER_VALUE:
@@ -96,7 +97,7 @@ double ZephirValue::asDouble() const {
 		case ZephirValue::TYPE::BOOLEAN_VALUE:
 			return boost::any_cast<bool>(value) ? 1 : 0;
 		case ZephirValue::TYPE::INT_VALUE:
-			return static_cast<double>(boost::any_cast<int>(value));
+			return static_cast<double> (boost::any_cast<int>(value));
 		case ZephirValue::TYPE::DOUBLE_VALUE:
 			return boost::any_cast<double>(value);
 		case ZephirValue::TYPE::STRING_VALUE:
@@ -129,7 +130,38 @@ bool ZephirValue::asBool() const {
 	}
 }
 
-ZephirValue operator+(const ZephirValue &left, const ZephirValue &right) {
+ZephirValue & ZephirValue::operator--() {
+	switch (this->type) {
+		case ZephirValue::TYPE::INT_VALUE:			
+			this->setValue(this->asInt()-1);
+			break;
+		case ZephirValue::TYPE::DOUBLE_VALUE:
+			this->setValue(this->asDouble()-1);
+			break;
+		default:
+			break;
+	}
+
+	return *this;
+}
+
+const ZephirValue ZephirValue::operator--(int dummy) {
+	ZephirValue old(*this);
+	switch (this->type) {
+		case ZephirValue::TYPE::INT_VALUE:			
+			this->setValue(this->asInt()-1);
+			break;
+		case ZephirValue::TYPE::DOUBLE_VALUE:
+			this->setValue(this->asDouble()-1);
+			break;
+		default:
+			break;
+	}
+
+	return old;
+}
+
+ZephirValue operator+(const ZephirValue& left, const ZephirValue& right) {
 	ZephirValue value;
 	switch (left.type) {
 		case ZephirValue::TYPE::BOOLEAN_VALUE:
@@ -160,7 +192,7 @@ ZephirValue operator+(const ZephirValue &left, const ZephirValue &right) {
 	return value;
 }
 
-bool operator<(const ZephirValue &left, const ZephirValue & right) {
+bool operator<(const ZephirValue& left, const ZephirValue& right) {
 	switch (right.type) {
 		case ZephirValue::TYPE::BOOLEAN_VALUE:
 			return left.asBool() < right.asBool();
@@ -175,7 +207,7 @@ bool operator<(const ZephirValue &left, const ZephirValue & right) {
 	}
 }
 
-bool operator>(const ZephirValue &left, const ZephirValue & right) {
+bool operator>(const ZephirValue& left, const ZephirValue& right) {
 	switch (right.type) {
 		case ZephirValue::TYPE::BOOLEAN_VALUE:
 			return left.asBool() > right.asBool();
@@ -188,6 +220,73 @@ bool operator>(const ZephirValue &left, const ZephirValue & right) {
 		default:
 			return false;
 	}
+}
+
+bool operator==(const ZephirValue& left, const ZephirValue& right) {
+	switch (right.type) {
+		case ZephirValue::TYPE::BOOLEAN_VALUE:
+			return left.asBool() == right.asBool();
+		case ZephirValue::TYPE::INT_VALUE:
+			return left.asInt() == right.asInt();
+		case ZephirValue::TYPE::DOUBLE_VALUE:
+			return left.asDouble() == right.asDouble();
+		case ZephirValue::TYPE::STRING_VALUE:
+			return left.asString() == right.asString();
+		default:
+			return false;
+	}
+}
+
+ZephirValue operator/(const ZephirValue& left, const ZephirValue& right) {
+	ZephirValue ret;
+	switch (right.type) {
+		case ZephirValue::TYPE::INT_VALUE:
+			ret.setType(ZephirValue::DOUBLE_VALUE);
+			if (right.asInt() > 0 ) {
+				ret.setValue(left.asInt() / right.asInt());
+			} else {
+				ret.setValue(0);
+			}
+			break;
+		case ZephirValue::TYPE::DOUBLE_VALUE:
+			ret.setType(ZephirValue::DOUBLE_VALUE);
+			if (right.asInt() > 0 ) {
+				ret.setValue(left.asDouble() / right.asDouble());
+			} else {
+				ret.setValue(0);
+			}
+			break;
+		default:
+			ret.setType(ZephirValue::NULL_VALUE);
+			break;
+	}
+	return ret;
+}
+
+ZephirValue operator%(const ZephirValue& left, const ZephirValue& right) {
+	ZephirValue ret;
+	switch (right.type) {
+		case ZephirValue::TYPE::INT_VALUE:
+			ret.setType(ZephirValue::INT_VALUE);
+			if (right.asInt() > 0 ) {
+				ret.setValue(left.asInt() % right.asInt());
+			} else {
+				ret.setValue(0);
+			}
+			break;
+		case ZephirValue::TYPE::DOUBLE_VALUE:
+			ret.setType(ZephirValue::DOUBLE_VALUE);
+			if (right.asDouble() > 0 ) {
+				ret.setValue(std::fmod(left.asDouble(), right.asDouble()));
+			} else {
+				ret.setValue(0);
+			}
+			break;
+		default:
+			ret.setType(ZephirValue::NULL_VALUE);
+			break;
+	}
+	return ret;
 }
 
 std::ostream& operator<<(std::ostream& out, const ZephirValue& value) {

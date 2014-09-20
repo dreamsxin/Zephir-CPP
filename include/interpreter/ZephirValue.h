@@ -23,7 +23,8 @@ public:
 		NATIVE_POINTER_VALUE,
 		NULL_VALUE,
 		ARRAY_VALUE,
-		ASSOC_VALUE
+		ASSOC_VALUE,
+		UNDEFINED_VALUE
 	};
 
 public:
@@ -45,6 +46,9 @@ public:
 	int asInt() const;
 	double asDouble() const;
 	bool asBool() const;
+
+	ZephirValue & operator--();
+	const ZephirValue operator--(int dummy);
 
 	ZephirValue& operator+=(const ZephirValue &right) {
 		switch (this->type) {
@@ -73,6 +77,9 @@ public:
 	friend ZephirValue operator+(const ZephirValue &left, const ZephirValue &right);
 	friend bool operator<(const ZephirValue &left, const ZephirValue & right);
 	friend bool operator>(const ZephirValue &left, const ZephirValue & right);
+	friend bool operator==(const ZephirValue &left, const ZephirValue & right);
+	friend ZephirValue operator/(const ZephirValue &left, const ZephirValue & right);
+	friend ZephirValue operator%(const ZephirValue &left, const ZephirValue & right);
 
 	friend std::ostream& operator<<(std::ostream& out, const ZephirValue& value);
 
