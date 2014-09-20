@@ -181,7 +181,7 @@ StatementResult Interpreter::executeIfStatement(const Json::Value& statement, Lo
 		ZephirValue value = result.getValue();
 
 		if (value.asBool()) {
-			StatementResult result = this->executeStatements(statement["statements"], env);
+			return this->executeStatements(statement["statements"], env);
 		}
 	}
 
