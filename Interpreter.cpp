@@ -64,7 +64,9 @@ StatementResult Interpreter::executeStatement(const Json::Value& statement, Loca
 			ret = this->executeEchoStatement(statement, env);
 		} else if (type.compare("if") == 0) {
 			ret = this->executeIfStatement(statement, env);
-		}	
+		} else if (type.compare("while") == 0) {
+			ret = this->executeWhileStatement(statement, env);
+		}
 	}
 
 	return ret;
@@ -159,6 +161,23 @@ StatementResult Interpreter::executeIfStatement(const Json::Value& statement, Lo
 				
 		if (value.asBool()) {
 			StatementResult result = this->executeStatements(statement["statements"], env);			
+		}
+	}
+
+	return ret;
+}
+
+StatementResult Interpreter::executeWhileStatement(const Json::Value& statement, LocalEnvironment * const env) {
+
+	StatementResult ret;
+	if (statement.isMember("expr")) {
+
+		StatementResult result = this->executeExpressionStatement(statement["expr"], env);
+		ZephirValue value = result.getValue();
+				
+		if (value.asBool()) {
+			StatementResult result = this->executeStatements(statement["statements"], env);
+			this->executeWhileStatement(statement, env);
 		}
 	}
 
