@@ -22,3 +22,9 @@ if size > 0 {
 		echo "size is " + size;
 	}
 }
+
+echo say();
+
+string function say(var str) {
+	return "My name is Zephir";
+}

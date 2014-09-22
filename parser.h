@@ -117,6 +117,3 @@
 #define XX_TRUE                           117
 #define XX_FALSE                          118
 #define XX_CBLOCK                         119
-
-#include "json/json.h"
-Json::Value xx_parse_program(char *program, unsigned int program_length, char *file_path);

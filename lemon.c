@@ -3756,6 +3756,8 @@ struct lemon *lemp;
   if( out ){
     for(i=1; i<lemp->nterminal; i++){
       fprintf(out,"#define %s%-30s %2d\n",prefix,lemp->symbols[i]->name,i);
+      fprintf(out,"#include \"json/json.h\"\n");
+      fprintf(out,"Json::Value xx_parse_program(char *program, unsigned int program_length, char *file_path);\n");
     }
     fclose(out);  
   }
