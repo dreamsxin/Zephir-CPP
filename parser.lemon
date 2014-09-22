@@ -2530,8 +2530,18 @@ xx_let_assignment(R) ::= IDENTIFIER(I) INCR . {
 	R = xx_ret_let_assignment("incr", NULL, I, NULL, NULL, NULL, status->scanner_state);
 }
 
+/* ++y */
+xx_let_assignment(R) ::= INCR IDENTIFIER(I) . {
+	R = xx_ret_let_assignment("incr", NULL, I, NULL, NULL, NULL, status->scanner_state);
+}
+
 /* y-- */
 xx_let_assignment(R) ::= IDENTIFIER(I) DECR . {
+	R = xx_ret_let_assignment("decr", NULL, I, NULL, NULL, NULL, status->scanner_state);
+}
+
+/* --y */
+xx_let_assignment(R) ::= DECR IDENTIFIER(I) . {
 	R = xx_ret_let_assignment("decr", NULL, I, NULL, NULL, NULL, status->scanner_state);
 }
 

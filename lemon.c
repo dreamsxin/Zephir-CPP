@@ -3331,7 +3331,7 @@ int mhflag;     /* Output in makeheaders format if true */
 
   in = tplt_open(lemp);
   if( in==0 ) return;
-  out = file_open(lemp,".c","w");
+  out = file_open(lemp,".cpp","w");
   if( out==0 ){
     fclose(in);
     return;
