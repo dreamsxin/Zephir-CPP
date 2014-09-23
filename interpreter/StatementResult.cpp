@@ -8,6 +8,7 @@
 #include "interpreter/StatementResult.h"
 
 StatementResult::StatementResult() {
+	this->type = NORMAL_RESULT;
 }
 
 StatementResult::StatementResult(const StatementResult& orig) {

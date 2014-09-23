@@ -58,6 +58,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <assert.h>
+
 #include "json/json.h"
 
 #include "string.h"
@@ -439,6 +441,7 @@ static Json::Value* xx_ret_function_definition(Json::Value* return_type, xx_pars
 	Json::Value* ret = new Json::Value();
 	(*ret)["type"] = "function";
 	(*ret)["name"] = T->token;
+	delete T;
 
 	if (nullptr != return_type) {
 		(*ret)["return-type"] = *return_type;
@@ -1369,6 +1372,9 @@ static Json::Value* xx_ret_cblock(xx_parser_token *T, xx_scanner_state *state)
 }
 
 %token_destructor {
+	if (status->status != XX_PARSING_FAILED) {
+		//TODO:
+	}
 	if ($$) {
 		if ($$->free_flag) {
 			
