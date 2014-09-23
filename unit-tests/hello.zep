@@ -25,6 +25,9 @@ if size > 0 {
 
 echo say();
 
+/**
+ * Test function
+ */
 string function say(var str) {
 	return "My name is Zephir";
 }

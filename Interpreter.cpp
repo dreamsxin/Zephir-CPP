@@ -258,18 +258,22 @@ StatementResult Interpreter::executeExpressionStatement(const Json::Value& state
 			ZephirValue value = (left.getValue() % right.getValue());
 
 			ret.setValue(value);
-		} else if (type.compare("mcall") == 0) {
-			StatementResult result = this->executeExpressionStatement(statement["variable"], env);
-
-			ZephirValue value = this->callMethod(result.getValue(), statement["name"].asString(), env);
-
-			ret.setValue(value);
 		} else if (type.compare("equals") == 0) {
 			StatementResult left = this->executeExpressionStatement(statement["left"], env);
 			StatementResult right = this->executeExpressionStatement(statement["right"], env);
 
 			ZephirValue value(ZephirValue::BOOLEAN_VALUE, left.getValue() == right.getValue());
 			ret.setValue(value);
+		} else if (type.compare("mcall") == 0) {
+			StatementResult result = this->executeExpressionStatement(statement["variable"], env);
+
+			ZephirValue value = this->callMethod(result.getValue(), statement["name"].asString(), env);
+
+			ret.setValue(value);
+		} else if (type.compare("fcall") == 0) {
+			std::string name = statement["name"].asString();
+			std::cout << "fcall " << name << std::endl;
+			this->callFunction(name, env);
 		}
 	}
 
@@ -319,6 +323,32 @@ ZephirValue Interpreter::callStringMethod(const ZephirValue& value, const std::s
 	if (method.compare("length") == 0) {
 		ret.setType(ZephirValue::INT_VALUE);
 		ret.setValue((int) value.asString().length());
+	}
+
+	return ret;
+}
+
+ZephirValue Interpreter::callFunction(const std::string& method, LocalEnvironment * const env) {
+
+	ZephirValue ret;
+
+	std::cout << "callFunction" << this->statements.size() << std::endl;
+	
+	int length = this->statements.size();
+	
+	for (int i = 0; i < length; i++) {
+		Json::Value statement = this->statements[i];
+		if (statement.isMember("type")) {
+			std::string type = statement["type"].asString();
+			if (type.compare("function") == 0) {
+				std::string name = statement["name"].asString();
+				if (name.compare(method) == 0) {
+					break;
+				}
+			}
+			
+		}
+		
 	}
 
 	return ret;

@@ -1411,7 +1411,7 @@ xx_top_statement(R) ::= xx_interface_def(T) . {
 	R = T;
 }
 
-xx_top_statement(R) ::= xx_function_definition(T) . {
+xx_top_statement(R) ::= xx_function_def(T) . {
 	R = T;
 }
 
@@ -1983,73 +1983,33 @@ xx_method_return_type_item(R) ::= xx_parameter_cast_collection(T) . {
 /** function definition */
 
 /** function name () { ... }*/
-xx_function_definition(R) ::= FUNCTION IDENTIFIER(I) PARENTHESES_OPEN PARENTHESES_CLOSE BRACKET_OPEN xx_statement_list(S) BRACKET_CLOSE . {
+xx_function_def(R) ::= FUNCTION IDENTIFIER(I) PARENTHESES_OPEN PARENTHESES_CLOSE BRACKET_OPEN xx_statement_list(S) BRACKET_CLOSE . {
 	R = xx_ret_function_definition(NULL, I, NULL, S, NULL, status->scanner_state);
 }
 
 /** function name (a, b, c) { }*/
-xx_function_definition(R) ::= FUNCTION IDENTIFIER(I) PARENTHESES_OPEN xx_parameter_list(L) PARENTHESES_CLOSE BRACKET_OPEN BRACKET_CLOSE . {
+xx_function_def(R) ::= FUNCTION IDENTIFIER(I) PARENTHESES_OPEN xx_parameter_list(L) PARENTHESES_CLOSE BRACKET_OPEN BRACKET_CLOSE . {
 	R = xx_ret_function_definition(NULL, I, L, NULL, NULL, status->scanner_state);
 }
 
 /** function name (a, b, c) { ... }*/
-xx_function_definition(R) ::= FUNCTION IDENTIFIER(I) PARENTHESES_OPEN xx_parameter_list(L) PARENTHESES_CLOSE BRACKET_OPEN xx_statement_list(S) BRACKET_CLOSE . {
+xx_function_def(R) ::= FUNCTION IDENTIFIER(I) PARENTHESES_OPEN xx_parameter_list(L) PARENTHESES_CLOSE BRACKET_OPEN xx_statement_list(S) BRACKET_CLOSE . {
 	R = xx_ret_function_definition(NULL, I, L, S, NULL, status->scanner_state);
 }
 
 /** type function name () { ... }*/
-xx_function_definition(R) ::= xx_function_return_type(T) FUNCTION IDENTIFIER(I) PARENTHESES_OPEN PARENTHESES_CLOSE BRACKET_OPEN xx_statement_list(S) BRACKET_CLOSE . {
+xx_function_def(R) ::= xx_parameter_type(T) FUNCTION IDENTIFIER(I) PARENTHESES_OPEN PARENTHESES_CLOSE BRACKET_OPEN xx_statement_list(S) BRACKET_CLOSE . {
 	R = xx_ret_function_definition(T, I, NULL, S, NULL, status->scanner_state);
 }
 
 /** type function name (a, b, c) { }*/
-xx_function_definition(R) ::= xx_function_return_type(T) FUNCTION IDENTIFIER(I) PARENTHESES_OPEN xx_parameter_list(L) PARENTHESES_CLOSE BRACKET_OPEN BRACKET_CLOSE . {
+xx_function_def(R) ::= xx_parameter_type(T) FUNCTION IDENTIFIER(I) PARENTHESES_OPEN xx_parameter_list(L) PARENTHESES_CLOSE BRACKET_OPEN BRACKET_CLOSE . {
 	R = xx_ret_function_definition(T, I, L, NULL, NULL, status->scanner_state);
 }
 
 /** type function name (a, b, c) { ... }*/
-xx_function_definition(R) ::= xx_function_return_type(T) FUNCTION IDENTIFIER(I) PARENTHESES_OPEN xx_parameter_list(L) PARENTHESES_CLOSE BRACKET_OPEN xx_statement_list(S) BRACKET_CLOSE . {
+xx_function_def(R) ::= xx_parameter_type(T) FUNCTION IDENTIFIER(I) PARENTHESES_OPEN xx_parameter_list(L) PARENTHESES_CLOSE BRACKET_OPEN xx_statement_list(S) BRACKET_CLOSE . {
 	R = xx_ret_function_definition(T, I, L, S, NULL, status->scanner_state);
-}
-
-xx_function_return_type(R) ::= VOID . {
-	R = xx_ret_return_type(1, NULL, status->scanner_state);
-}
-
-xx_function_return_type(R) ::= xx_function_return_type_list(L) . {
-	R = xx_ret_return_type(0, L, status->scanner_state);
-}
-
-xx_function_return_type_list(R) ::= xx_function_return_type_list(L) BITWISE_OR xx_function_return_type_item(I) . {
-	R = xx_ret_list(L, I);
-}
-
-xx_function_return_type_list(R) ::= xx_function_return_type_item(I) . {
-	R = xx_ret_list(NULL, I);
-}
-
-xx_function_return_type_item(R) ::= xx_parameter_type(T) . {
-	R = xx_ret_return_type_item(T, NULL, 0, 0, status->scanner_state);
-}
-
-xx_function_return_type_item(R) ::= NULL . {
-	R = xx_ret_return_type_item(xx_ret_type(XX_T_TYPE_NULL), NULL, 0, 0, status->scanner_state);
-}
-
-xx_function_return_type_item(R) ::= THIS . {
-	R = xx_ret_return_type_item(xx_ret_type(XX_T_TYPE_THIS), NULL, 0, 0, status->scanner_state);
-}
-
-xx_function_return_type_item(R) ::= xx_parameter_type(T) NOT . {
-	R = xx_ret_return_type_item(T, NULL, 1, 0, status->scanner_state);
-}
-
-xx_function_return_type_item(R) ::= xx_parameter_cast(T) . {
-	R = xx_ret_return_type_item(NULL, T, 0, 0, status->scanner_state);
-}
-
-xx_function_return_type_item(R) ::= xx_parameter_cast_collection(T) . {
-	R = xx_ret_return_type_item(NULL, T, 0, 1, status->scanner_state);
 }
 
 /* parameters list */

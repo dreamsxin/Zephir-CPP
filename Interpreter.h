@@ -45,6 +45,7 @@ private:
 	ZephirValue getVariable(const std::string& name, LocalEnvironment* const env);
 	ZephirValue callMethod(const ZephirValue& value, const std::string& method, LocalEnvironment* const env);
 	ZephirValue callStringMethod(const ZephirValue& value, const std::string& method, LocalEnvironment* const env);
+	ZephirValue callFunction(const std::string& function_name, LocalEnvironment* const env);
 
 private:
 	Compiler compiler;
