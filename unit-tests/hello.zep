@@ -23,11 +23,11 @@ if size > 0 {
 	}
 }
 
-echo say();
+echo say("Zephir");
 
 /**
  * Test function
  */
 string function say(var str) {
-	return "My name is Zephir";
+	return "My name is " + str;
 }

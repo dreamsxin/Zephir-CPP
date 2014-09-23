@@ -77,6 +77,7 @@ StatementResult Interpreter::executeStatement(const Json::Value& statement, Loca
 			ret = this->executeWhileStatement(statement, env);
 		} else if (type.compare("return") == 0) {
 			ret = this->executeExpressionStatement(statement["expr"], env);
+			ret.setType(StatementResult::RETURN_RESULT);
 		} else if (type.compare("break") == 0) {
 			ret.setType(StatementResult::BREAK_RESULT);
 		} else if (type.compare("continue") == 0) {
@@ -272,9 +273,36 @@ StatementResult Interpreter::executeExpressionStatement(const Json::Value& state
 			ret.setValue(value);
 		} else if (type.compare("fcall") == 0) {
 			std::string name = statement["name"].asString();
-			std::cout << "fcall " << name << std::endl;
-			this->callFunction(name, env);
+
+			Json::Value parameters;
+			if (statement.isMember("parameters")) {
+				parameters = statement["parameters"];
+				
+			}
+			ZephirValue value = this->callFunction(name, parameters, env);
+			ret.setValue(value);
 		}
+	}
+
+	return ret;
+}
+
+StatementResult Interpreter::executeParametersStatements(const Json::Value& parameters, const Json::Value& parameters2, LocalEnvironment * const env) {
+
+	StatementResult ret;
+	int size = parameters.size();
+	int size2 = parameters2.size();
+
+	for (int i = 0; i < size2; i++) {
+		std::string name = parameters2[i]["name"].asString();
+		ZephirValue value;
+		if (i < size) {
+			Json::Value parameter = parameters[i]["parameter"];
+			StatementResult result = this->executeExpressionStatement(parameter, env);
+			value = result.getValue();
+		}
+			
+		this->addVariable(name, value, env);	
 	}
 
 	return ret;
@@ -328,11 +356,9 @@ ZephirValue Interpreter::callStringMethod(const ZephirValue& value, const std::s
 	return ret;
 }
 
-ZephirValue Interpreter::callFunction(const std::string& method, LocalEnvironment * const env) {
+ZephirValue Interpreter::callFunction(const std::string& method, const Json::Value& parameters, LocalEnvironment * const env) {
 
 	ZephirValue ret;
-
-	std::cout << "callFunction" << this->statements.size() << std::endl;
 	
 	int length = this->statements.size();
 	
@@ -343,6 +369,15 @@ ZephirValue Interpreter::callFunction(const std::string& method, LocalEnvironmen
 			if (type.compare("function") == 0) {
 				std::string name = statement["name"].asString();
 				if (name.compare(method) == 0) {
+					
+					Json::Value parameters2 = statement["parameters"];
+					LocalEnvironment local_env;
+					this->executeParametersStatements(parameters, parameters2, &local_env);
+					
+					Json::Value statements = statement["statements"];
+					StatementResult result = this->executeStatements(statements, &local_env);					
+
+					ret = result.getValue();
 					break;
 				}
 			}
