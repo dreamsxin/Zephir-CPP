@@ -14,6 +14,42 @@ sudo apt-get install libboost-regex1.55-dev
 ```
 
 # Tests
-```shel
-valgrind --tool=memcheck --leak-check=full ../bin/zephir-cpp --run hello.zep
+```shell
+valgrind --tool=memcheck --leak-check=full ./bin/zephir-cpp --run unit-tests/hello.zep
+```
+hello.zep
+```shell
+string ret, message = "hello";
+int size;
+
+echo message;
+
+let message = message + " world!";
+
+echo message;
+
+let size = message->length();
+
+echo "size is " + size;
+
+if size > 0 {
+	echo "size is greater zero";
+	while size > 0 {
+		let --size;
+		if size % 2 == 0 {
+			echo "size%2 == 0";
+			continue;
+		}
+		echo "size is " + size;
+	}
+}
+
+echo say("Zephir");
+
+/**
+ * Test function
+ */
+string function say(var str) {
+	return "My name is " + str;
+}
 ```
