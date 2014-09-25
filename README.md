@@ -6,14 +6,26 @@ Zephir-CPP is c++ implementation of the zephir.
 # Requirements
 
 ```shell
+# Ubuntu 14.04
 sudo apt-get install libboost1.54-dev
-sudo apt-get install libboost-program-options1.55-dev
-sudo apt-get install libboost-system1.55-dev
-sudo apt-get install libboost-filesystem1.55-dev
-sudo apt-get install libboost-regex1.55-dev
+sudo apt-get install libboost-program-options1.54-dev
+sudo apt-get install libboost-system1.54-dev
+sudo apt-get install libboost-filesystem1.54-dev
+sudo apt-get install libboost-regex1.54-dev
+
+# Ubuntu 12.04
+sudo apt-get install libboost1.53-dev
+sudo apt-get install libboost-program-options1.53-dev
+sudo apt-get install libboost-system1.53-dev
+sudo apt-get install libboost-filesystem1.53-dev
+sudo apt-get install libboost-regex1.53-dev
 ```
 
-# Tests
+# 测试
+```shell
+./bin/zephir-cpp --run ./unit-tests/hello.zep
+```
+# 检测内存
 ```shell
 valgrind --tool=memcheck --leak-check=full ./bin/zephir-cpp --run unit-tests/hello.zep
 ```
