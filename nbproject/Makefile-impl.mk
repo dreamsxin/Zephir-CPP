@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=Zephir-CPP
+PROJECTNAME=zephir-cpp
 
 # Active Configuration
 DEFAULTCONF=Debug

@@ -129,7 +129,7 @@ Json::Value Compiler::parse( const std::string& filename) {
 	
 	std::string program = ost.str();
 
-	return xx_parse_program((char *)program.c_str(), program.length(), (char *)filename.c_str());
+	return XX__parse_program((char *)program.c_str(), program.length(), (char *)filename.c_str());
 }
 
 bool Compiler::recursiveProcess(const path& source, const path& dest) {

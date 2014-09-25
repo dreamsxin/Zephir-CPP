@@ -14,14 +14,14 @@
         <itemPath>include/json/json.h</itemPath>
       </logicalFolder>
       <logicalFolder name="usage" displayName="usage" projectFiles="true">
-        <itemPath>/home/zhuzx/work/Zephir-CPP/include/usage/CustomOptionDescription.hpp</itemPath>
-        <itemPath>/home/zhuzx/work/Zephir-CPP/include/usage/OptionPrinter.hpp</itemPath>
+        <itemPath>include/usage/CustomOptionDescription.hpp</itemPath>
+        <itemPath>include/usage/OptionPrinter.hpp</itemPath>
       </logicalFolder>
       <itemPath>Compiler.h</itemPath>
       <itemPath>Interpreter.h</itemPath>
       <itemPath>RuntimeError.h</itemPath>
-      <itemPath>/home/zhuzx/work/Zephir-CPP/parser.h</itemPath>
-      <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.h</itemPath>
+      <itemPath>parser.h</itemPath>
+      <itemPath>scanner.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -42,15 +42,15 @@
         <itemPath>json/jsoncpp.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="usage" displayName="usage" projectFiles="true">
-        <itemPath>/home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp</itemPath>
-        <itemPath>/home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp</itemPath>
+        <itemPath>usage/CustomOptionDescription.cpp</itemPath>
+        <itemPath>usage/OptionPrinter.cpp</itemPath>
       </logicalFolder>
       <itemPath>Compiler.cpp</itemPath>
       <itemPath>Interpreter.cpp</itemPath>
       <itemPath>RuntimeError.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
-      <itemPath>/home/zhuzx/work/Zephir-CPP/parser.cpp</itemPath>
-      <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.cpp</itemPath>
+      <itemPath>parser.cpp</itemPath>
+      <itemPath>scanner.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -65,12 +65,7 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>/home/zhuzx/work/Zephir-CPP/json</Elem>
-    <Elem>/home/zhuzx/work/Zephir-CPP/usage</Elem>
-    <Elem>/home/zhuzx/work/Zephir-CPP/include/usage</Elem>
-    <Elem>include/json</Elem>
-    <Elem>include/interpreter</Elem>
-    <Elem>interpreter</Elem>
+    <Elem>.</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -99,37 +94,7 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="/home/zhuzx/work/Zephir-CPP/include/usage/CustomOptionDescription.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/include/usage/OptionPrinter.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/parser.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/parser.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="/home/zhuzx/work/Zephir-CPP/parser.lemon"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/scanner.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/scanner.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -137,16 +102,6 @@
       <item path="/home/zhuzx/work/Zephir-CPP/scanner.re"
             ex="false"
             tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp"
-            ex="false"
-            tool="1"
             flavor2="0">
       </item>
       <item path="Compiler.cpp" ex="false" tool="1" flavor2="0">
@@ -177,6 +132,13 @@
       </item>
       <item path="include/json/json.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/usage/CustomOptionDescription.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/usage/OptionPrinter.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="interpreter/LocalEnvironment.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="interpreter/StatementResult.cpp" ex="false" tool="1" flavor2="0">
@@ -187,7 +149,19 @@
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="parser.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="parser.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="parser.template" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scanner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="scanner.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="usage/CustomOptionDescription.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="usage/OptionPrinter.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -215,37 +189,7 @@
           <commandLine>-lboost_program_options -lboost_system -lboost_filesystem -lboost_regex</commandLine>
         </linkerTool>
       </compileType>
-      <item path="/home/zhuzx/work/Zephir-CPP/include/usage/CustomOptionDescription.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/include/usage/OptionPrinter.hpp"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/parser.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/parser.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="/home/zhuzx/work/Zephir-CPP/parser.lemon"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/scanner.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/scanner.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -253,16 +197,6 @@
       <item path="/home/zhuzx/work/Zephir-CPP/scanner.re"
             ex="false"
             tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp"
-            ex="false"
-            tool="1"
             flavor2="0">
       </item>
       <item path="Compiler.cpp" ex="false" tool="1" flavor2="0">
@@ -293,6 +227,13 @@
       </item>
       <item path="include/json/json.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/usage/CustomOptionDescription.hpp"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="include/usage/OptionPrinter.hpp" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="interpreter/LocalEnvironment.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="interpreter/StatementResult.cpp" ex="false" tool="1" flavor2="0">
@@ -303,7 +244,19 @@
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="parser.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="parser.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="parser.template" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scanner.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="scanner.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="usage/CustomOptionDescription.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="usage/OptionPrinter.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
   </confs>

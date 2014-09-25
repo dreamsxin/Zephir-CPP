@@ -10,12 +10,7 @@
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
-                <sourceRootElem>/home/zhuzx/work/Zephir-CPP/json</sourceRootElem>
-                <sourceRootElem>/home/zhuzx/work/Zephir-CPP/usage</sourceRootElem>
-                <sourceRootElem>/home/zhuzx/work/Zephir-CPP/include/usage</sourceRootElem>
-                <sourceRootElem>include/json</sourceRootElem>
-                <sourceRootElem>include/interpreter</sourceRootElem>
-                <sourceRootElem>interpreter</sourceRootElem>
+                <sourceRootElem>.</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

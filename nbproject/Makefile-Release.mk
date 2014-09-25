@@ -35,10 +35,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/1585107349/parser.o \
-	${OBJECTDIR}/_ext/1585107349/scanner.o \
-	${OBJECTDIR}/_ext/842322087/CustomOptionDescription.o \
-	${OBJECTDIR}/_ext/842322087/OptionPrinter.o \
 	${OBJECTDIR}/Compiler.o \
 	${OBJECTDIR}/Interpreter.o \
 	${OBJECTDIR}/RuntimeError.o \
@@ -46,7 +42,11 @@ OBJECTFILES= \
 	${OBJECTDIR}/interpreter/StatementResult.o \
 	${OBJECTDIR}/interpreter/ZephirValue.o \
 	${OBJECTDIR}/json/jsoncpp.o \
-	${OBJECTDIR}/main.o
+	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/parser.o \
+	${OBJECTDIR}/scanner.o \
+	${OBJECTDIR}/usage/CustomOptionDescription.o \
+	${OBJECTDIR}/usage/OptionPrinter.o
 
 
 # C Compiler Flags
@@ -71,26 +71,6 @@ LDLIBSOPTIONS=
 
 zephir-cpp: ${OBJECTFILES}
 	${LINK.cc} -o zephir-cpp ${OBJECTFILES} ${LDLIBSOPTIONS} -lboost_program_options -lboost_system -lboost_filesystem -lboost_regex
-
-${OBJECTDIR}/_ext/1585107349/parser.o: /home/zhuzx/work/Zephir-CPP/parser.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1585107349
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/parser.o /home/zhuzx/work/Zephir-CPP/parser.cpp
-
-${OBJECTDIR}/_ext/1585107349/scanner.o: /home/zhuzx/work/Zephir-CPP/scanner.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1585107349
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/1585107349/scanner.o /home/zhuzx/work/Zephir-CPP/scanner.cpp
-
-${OBJECTDIR}/_ext/842322087/CustomOptionDescription.o: /home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/842322087
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/842322087/CustomOptionDescription.o /home/zhuzx/work/Zephir-CPP/usage/CustomOptionDescription.cpp
-
-${OBJECTDIR}/_ext/842322087/OptionPrinter.o: /home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/842322087
-	${RM} "$@.d"
-	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/842322087/OptionPrinter.o /home/zhuzx/work/Zephir-CPP/usage/OptionPrinter.cpp
 
 ${OBJECTDIR}/Compiler.o: Compiler.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -131,6 +111,26 @@ ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+
+${OBJECTDIR}/parser.o: parser.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/parser.o parser.cpp
+
+${OBJECTDIR}/scanner.o: scanner.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/scanner.o scanner.cpp
+
+${OBJECTDIR}/usage/CustomOptionDescription.o: usage/CustomOptionDescription.cpp 
+	${MKDIR} -p ${OBJECTDIR}/usage
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/usage/CustomOptionDescription.o usage/CustomOptionDescription.cpp
+
+${OBJECTDIR}/usage/OptionPrinter.o: usage/OptionPrinter.cpp 
+	${MKDIR} -p ${OBJECTDIR}/usage
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/usage/OptionPrinter.o usage/OptionPrinter.cpp
 
 # Subprojects
 .build-subprojects:

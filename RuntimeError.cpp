@@ -18,7 +18,7 @@ RuntimeError::RuntimeError(const RuntimeError& orig) {
 	this->generate();
 }
 
-RuntimeError::~RuntimeError() {
+RuntimeError::~RuntimeError() throw() {
 }
 
 const char* RuntimeError::what() const throw () {

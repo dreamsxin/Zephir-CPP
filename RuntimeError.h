@@ -138,7 +138,7 @@ public:
 public:
 	RuntimeError(const RuntimeError::TYPE type, const Json::Value& info);
 	RuntimeError(const RuntimeError& orig);
-	virtual ~RuntimeError();
+	virtual ~RuntimeError() throw();
 
 	virtual const char* what() const throw ();
 
