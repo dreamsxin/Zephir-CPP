@@ -26,9 +26,12 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
-      <itemPath>/home/zhuzx/work/Zephir-CPP/parser.lemon</itemPath>
+      <logicalFolder name="unit-tests" displayName="unit-tests" projectFiles="true">
+        <itemPath>unit-tests/hello.zep</itemPath>
+      </logicalFolder>
+      <itemPath>parser.lemon</itemPath>
       <itemPath>parser.template</itemPath>
-      <itemPath>/home/zhuzx/work/Zephir-CPP/scanner.re</itemPath>
+      <itemPath>scanner.re</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -94,16 +97,6 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="/home/zhuzx/work/Zephir-CPP/parser.lemon"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/scanner.re"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="Compiler.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Compiler.h" ex="false" tool="3" flavor2="0">
@@ -153,11 +146,17 @@
       </item>
       <item path="parser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="parser.lemon" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="parser.template" ex="false" tool="3" flavor2="0">
       </item>
       <item path="scanner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="scanner.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scanner.re" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="unit-tests/hello.zep" ex="false" tool="3" flavor2="0">
       </item>
       <item path="usage/CustomOptionDescription.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -189,16 +188,6 @@
           <commandLine>-lboost_program_options -lboost_system -lboost_filesystem -lboost_regex</commandLine>
         </linkerTool>
       </compileType>
-      <item path="/home/zhuzx/work/Zephir-CPP/parser.lemon"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="/home/zhuzx/work/Zephir-CPP/scanner.re"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="Compiler.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="Compiler.h" ex="false" tool="3" flavor2="0">
@@ -248,11 +237,17 @@
       </item>
       <item path="parser.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="parser.lemon" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="parser.template" ex="false" tool="3" flavor2="0">
       </item>
       <item path="scanner.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="scanner.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="scanner.re" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="unit-tests/hello.zep" ex="false" tool="3" flavor2="0">
       </item>
       <item path="usage/CustomOptionDescription.cpp" ex="false" tool="1" flavor2="0">
       </item>
